@@ -3,107 +3,178 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Juegos para Memoria by bhg</title>
+<title>Juegos para la Memoria</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: Georgia, serif; background: #FFF8F0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
 .pantalla { display: none; width: 100%; max-width: 900px; }
-#pantalla-inicio { display: block; width: 100%; max-width: 900px; }
-.titulo-principal { text-align: center; font-size: 36px; color: #5C3D1E; margin: 20px 0 8px; }
-.subtitulo { text-align: center; font-size: 20px; color: #8B6340; margin-bottom: 30px; }
-.grid-juegos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 30px; }
-.tarjeta-juego { background: white; border-radius: 20px; border: 3px solid #E8D5B7; padding: 28px 16px; text-align: center; cursor: pointer; transition: transform 0.15s, border-color 0.15s; }
+#pantalla-bienvenida, #pantalla-inicio { width: 100%; max-width: 900px; }
+#pantalla-bienvenida { display: block; }
+#pantalla-inicio { display: none; }
+
+/* ── BIENVENIDA ── */
+.bienvenida-titulo { text-align: center; font-size: 38px; color: #5C3D1E; margin: 40px 0 12px; }
+.bienvenida-sub { text-align: center; font-size: 20px; color: #8B6340; margin-bottom: 50px; }
+.jugadores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 600px; margin: 0 auto 40px; }
+.jugador-btn { background: white; border: 3px solid #E8D5B7; border-radius: 24px; padding: 44px 20px; text-align: center; cursor: pointer; transition: transform 0.15s, border-color 0.15s; }
+.jugador-btn:hover { transform: scale(1.04); border-color: #C97B2A; }
+.jugador-btn .jugador-icono { font-size: 72px; display: block; margin-bottom: 16px; }
+.jugador-btn .jugador-nombre { font-size: 30px; color: #5C3D1E; font-weight: bold; }
+
+/* ── RANKING BOTÓN ── */
+.btn-ranking-top { display: block; margin: 0 auto 10px; font-size: 18px; background: transparent; border: 2px solid #C97B2A; color: #C97B2A; border-radius: 12px; padding: 10px 24px; cursor: pointer; font-family: Georgia, serif; }
+.btn-ranking-top:hover { background: #C97B2A; color: white; }
+
+/* ── INICIO ── */
+.saludo { text-align: center; font-size: 30px; color: #5C3D1E; margin: 16px 0 6px; }
+.subtitulo { text-align: center; font-size: 18px; color: #8B6340; margin-bottom: 24px; }
+.grid-juegos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.tarjeta-juego { background: white; border-radius: 20px; border: 3px solid #E8D5B7; padding: 24px 14px; text-align: center; cursor: pointer; transition: transform 0.15s, border-color 0.15s; }
 .tarjeta-juego:hover { transform: scale(1.04); border-color: #C97B2A; }
-.tarjeta-juego .icono { font-size: 60px; display: block; margin-bottom: 12px; line-height: 1; }
-.tarjeta-juego .nombre { font-size: 22px; font-weight: bold; color: #5C3D1E; margin-bottom: 8px; }
-.tarjeta-juego .descripcion { font-size: 15px; color: #8B6340; line-height: 1.4; }
+.tarjeta-juego .icono { font-size: 52px; display: block; margin-bottom: 10px; line-height: 1; }
+.tarjeta-juego .nombre { font-size: 20px; font-weight: bold; color: #5C3D1E; margin-bottom: 6px; }
+.tarjeta-juego .descripcion { font-size: 13px; color: #8B6340; line-height: 1.4; }
+.btn-cambiar { display: block; margin: 0 auto; font-size: 16px; background: transparent; border: 2px solid #C97B2A; color: #C97B2A; border-radius: 12px; padding: 8px 20px; cursor: pointer; font-family: Georgia, serif; }
+.btn-cambiar:hover { background: #C97B2A; color: white; }
+
+/* ── RANKING PANTALLA ── */
+.ranking-tabla { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 18px; }
+.ranking-tabla th { background: #C97B2A; color: white; padding: 14px; text-align: center; font-size: 20px; }
+.ranking-tabla td { padding: 12px 16px; border-bottom: 1px solid #E8D5B7; text-align: center; color: #5C3D1E; }
+.ranking-tabla tr:nth-child(even) td { background: #FFF3E0; }
+.corona { font-size: 20px; }
+.btn-reset { display: block; margin: 20px auto 0; font-size: 18px; background: transparent; border: 2px solid #E57373; color: #E57373; border-radius: 12px; padding: 12px 28px; cursor: pointer; font-family: Georgia, serif; }
+.btn-reset:hover { background: #FFCDD2; }
+
+/* ── JUEGOS ── */
 .cabecera-juego { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #E8D5B7; }
-.btn-volver { font-size: 20px; background: #FFF8F0; border: 2px solid #C97B2A; color: #C97B2A; border-radius: 12px; padding: 10px 18px; cursor: pointer; font-family: Georgia, serif; }
+.btn-volver { font-size: 18px; background: #FFF8F0; border: 2px solid #C97B2A; color: #C97B2A; border-radius: 12px; padding: 8px 16px; cursor: pointer; font-family: Georgia, serif; }
 .btn-volver:hover { background: #C97B2A; color: white; }
-.titulo-juego { font-size: 28px; color: #5C3D1E; }
-.btn-nuevo { display: block; margin: 0 auto; font-size: 22px; background: #C97B2A; color: white; border: none; border-radius: 14px; padding: 14px 36px; cursor: pointer; font-family: Georgia, serif; }
+.titulo-juego { font-size: 26px; color: #5C3D1E; }
+.jugador-badge { font-size: 16px; color: #8B6340; margin-left: auto; }
+.btn-nuevo { display: block; margin: 0 auto; font-size: 20px; background: #C97B2A; color: white; border: none; border-radius: 14px; padding: 14px 36px; cursor: pointer; font-family: Georgia, serif; }
 .btn-nuevo:hover { background: #A0621E; }
-.info-partida { text-align: center; font-size: 20px; color: #8B6340; margin-bottom: 16px; }
-.msg-juego { text-align: center; font-size: 26px; color: #5C3D1E; min-height: 38px; margin-bottom: 14px; }
-.pantalla-fin { text-align: center; padding: 30px 0; }
-.pantalla-fin .fin-emoji { font-size: 64px; margin-bottom: 16px; }
-.pantalla-fin .fin-titulo { font-size: 30px; color: #5C3D1E; margin-bottom: 12px; }
-.pantalla-fin .fin-puntos { font-size: 24px; color: #8B6340; margin-bottom: 28px; }
+.info-partida { text-align: center; font-size: 19px; color: #8B6340; margin-bottom: 14px; }
+.msg-juego { text-align: center; font-size: 24px; color: #5C3D1E; min-height: 36px; margin-bottom: 12px; }
+.pantalla-fin { text-align: center; padding: 20px 0; }
+.pantalla-fin .fin-emoji { font-size: 60px; margin-bottom: 14px; }
+.pantalla-fin .fin-titulo { font-size: 28px; color: #5C3D1E; margin-bottom: 10px; }
+.pantalla-fin .fin-puntos { font-size: 22px; color: #8B6340; margin-bottom: 24px; }
 
 /* ── MEMORY ── */
-#tablero-memory { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; max-width: 680px; margin: 0 auto 20px; }
-.carta { aspect-ratio:1; border-radius:14px; border:3px solid #E8D5B7; font-size:48px; display:flex; align-items:center; justify-content:center; cursor:pointer; background:#FFF3E0; transition:transform 0.2s; user-select:none; }
+#tablero-memory { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; max-width: 660px; margin: 0 auto 20px; }
+.carta { aspect-ratio:1; border-radius:14px; border:3px solid #E8D5B7; font-size:46px; display:flex; align-items:center; justify-content:center; cursor:pointer; background:#FFF3E0; transition:transform 0.2s; user-select:none; }
 .carta:hover { transform:scale(1.05); }
 .carta.volteada,.carta.encontrada { background:white; border-color:#C97B2A; }
 .carta.oculta span { display:none; }
 .carta.encontrada { border-color:#4CAF50; background:#E8F5E9; }
 
 /* ── REFRANES ── */
-#area-refran { background:white; border-radius:20px; border:3px solid #E8D5B7; padding:30px; text-align:center; max-width:660px; margin:0 auto 24px; }
-#texto-refran { font-size:28px; color:#5C3D1E; line-height:1.6; margin-bottom:26px; }
-.hueco { color:#C97B2A; font-size:32px; }
-.opciones-refran { display:flex; flex-direction:column; gap:12px; }
-.opcion-btn { font-size:22px; background:#FFF3E0; border:2px solid #E8D5B7; border-radius:14px; padding:14px 20px; cursor:pointer; font-family:Georgia,serif; color:#5C3D1E; }
+#area-refran { background:white; border-radius:20px; border:3px solid #E8D5B7; padding:28px; text-align:center; max-width:660px; margin:0 auto 22px; }
+#texto-refran { font-size:26px; color:#5C3D1E; line-height:1.6; margin-bottom:22px; }
+.hueco { color:#C97B2A; font-size:30px; }
+.opciones-refran { display:flex; flex-direction:column; gap:11px; }
+.opcion-btn { font-size:20px; background:#FFF3E0; border:2px solid #E8D5B7; border-radius:14px; padding:13px 18px; cursor:pointer; font-family:Georgia,serif; color:#5C3D1E; }
 .opcion-btn:hover { background:#FFE0B2; }
 .opcion-btn.correcto { background:#C8E6C9; border-color:#4CAF50; }
 .opcion-btn.incorrecto { background:#FFCDD2; border-color:#F44336; }
 
 /* ── QUÉ FALTA ── */
-#escena { background:white; border-radius:20px; border:3px solid #E8D5B7; padding:28px; text-align:center; max-width:660px; margin:0 auto 18px; font-size:58px; line-height:1.7; min-height:160px; }
-.opciones-imagen { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-width:660px; margin:0 auto 16px; }
-.opcion-img-btn { font-size:42px; background:#FFF3E0; border:2px solid #E8D5B7; border-radius:14px; padding:18px; cursor:pointer; }
+#escena { background:white; border-radius:20px; border:3px solid #E8D5B7; padding:26px; text-align:center; max-width:660px; margin:0 auto 16px; font-size:54px; line-height:1.7; min-height:150px; }
+.opciones-imagen { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-width:660px; margin:0 auto 14px; }
+.opcion-img-btn { font-size:40px; background:#FFF3E0; border:2px solid #E8D5B7; border-radius:14px; padding:16px; cursor:pointer; }
 .opcion-img-btn:hover { background:#FFE0B2; }
 .opcion-img-btn.correcto { background:#C8E6C9; border-color:#4CAF50; }
 .opcion-img-btn.incorrecto { background:#FFCDD2; border-color:#F44336; }
 
 /* ── INTRUSA ── */
-.opciones-intrusa { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; max-width:660px; margin:0 auto 20px; }
-.opcion-intrusa-btn { font-size:26px; background:#FFF3E0; border:2px solid #E8D5B7; border-radius:14px; padding:20px; cursor:pointer; font-family:Georgia,serif; color:#5C3D1E; }
+.opciones-intrusa { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; max-width:660px; margin:0 auto 18px; }
+.opcion-intrusa-btn { font-size:24px; background:#FFF3E0; border:2px solid #E8D5B7; border-radius:14px; padding:18px; cursor:pointer; font-family:Georgia,serif; color:#5C3D1E; }
 .opcion-intrusa-btn:hover { background:#FFE0B2; }
 .opcion-intrusa-btn.correcto { background:#C8E6C9; border-color:#4CAF50; }
 .opcion-intrusa-btn.incorrecto { background:#FFCDD2; border-color:#F44336; }
-.pista-intrusa { text-align:center; font-size:18px; color:#8B6340; margin-bottom:14px; font-style:italic; }
+.pista-txt { text-align:center; font-size:17px; color:#8B6340; margin-bottom:12px; font-style:italic; }
 
 /* ── ANAGRAMA ── */
-.letras-anagrama { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:0 auto 24px; max-width:600px; }
-.letra-btn { font-size:32px; font-weight:bold; background:white; border:3px solid #C97B2A; border-radius:12px; width:60px; height:60px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#5C3D1E; font-family:Georgia,serif; transition:background 0.15s; }
+.letras-anagrama { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:0 auto 22px; max-width:600px; }
+.letra-btn { font-size:30px; font-weight:bold; background:white; border:3px solid #C97B2A; border-radius:12px; width:56px; height:56px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#5C3D1E; font-family:Georgia,serif; }
 .letra-btn:hover { background:#FFE0B2; }
 .letra-btn.usada { background:#E8D5B7; border-color:#E8D5B7; color:#B0A090; cursor:default; }
-.respuesta-anagrama { font-size:36px; color:#5C3D1E; text-align:center; letter-spacing:6px; min-height:52px; margin-bottom:16px; background:white; border-radius:14px; border:2px solid #E8D5B7; padding:12px 20px; max-width:500px; margin:0 auto 20px; }
-.btn-borrar { font-size:18px; background:#FFF3E0; border:2px solid #E8D5B7; border-radius:12px; padding:10px 24px; cursor:pointer; font-family:Georgia,serif; color:#5C3D1E; display:block; margin:0 auto 16px; }
+.respuesta-anagrama { font-size:34px; color:#5C3D1E; text-align:center; letter-spacing:6px; min-height:50px; margin:0 auto 18px; background:white; border-radius:14px; border:2px solid #E8D5B7; padding:12px 20px; max-width:500px; }
+.btn-borrar { font-size:17px; background:#FFF3E0; border:2px solid #E8D5B7; border-radius:12px; padding:9px 22px; cursor:pointer; font-family:Georgia,serif; color:#5C3D1E; display:block; margin:0 auto 14px; }
 .btn-borrar:hover { background:#FFE0B2; }
-.pista-anagrama { text-align:center; font-size:18px; color:#8B6340; margin-bottom:14px; font-style:italic; }
 
-/* ── DEFINICIONES ── */
-.palabra-definicion { background:white; border-radius:20px; border:3px solid #E8D5B7; padding:24px; text-align:center; max-width:660px; margin:0 auto 20px; font-size:26px; color:#5C3D1E; line-height:1.5; }
-.opciones-definicion { display:flex; flex-direction:column; gap:12px; max-width:660px; margin:0 auto 20px; }
-.opcion-def-btn { font-size:22px; background:#FFF3E0; border:2px solid #E8D5B7; border-radius:14px; padding:14px 20px; cursor:pointer; font-family:Georgia,serif; color:#5C3D1E; text-align:left; }
+/* ── DEFINICIÓN ── */
+.palabra-definicion { background:white; border-radius:20px; border:3px solid #E8D5B7; padding:22px; text-align:center; max-width:660px; margin:0 auto 18px; font-size:24px; color:#5C3D1E; line-height:1.5; }
+.opciones-definicion { display:flex; flex-direction:column; gap:11px; max-width:660px; margin:0 auto 18px; }
+.opcion-def-btn { font-size:20px; background:#FFF3E0; border:2px solid #E8D5B7; border-radius:14px; padding:13px 18px; cursor:pointer; font-family:Georgia,serif; color:#5C3D1E; text-align:left; }
 .opcion-def-btn:hover { background:#FFE0B2; }
 .opcion-def-btn.correcto { background:#C8E6C9; border-color:#4CAF50; }
 .opcion-def-btn.incorrecto { background:#FFCDD2; border-color:#F44336; }
 
 /* ── CATEGORÍAS ── */
-.palabras-categoria { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; max-width:700px; margin:0 auto 20px; }
-.palabra-tag { font-size:22px; background:white; border:2px solid #C97B2A; border-radius:12px; padding:12px 20px; cursor:pointer; font-family:Georgia,serif; color:#5C3D1E; }
+.palabras-categoria { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; max-width:700px; margin:0 auto 18px; }
+.palabra-tag { font-size:20px; background:white; border:2px solid #C97B2A; border-radius:12px; padding:10px 18px; cursor:pointer; font-family:Georgia,serif; color:#5C3D1E; }
 .palabra-tag:hover { background:#FFE0B2; }
 .palabra-tag.seleccionada { background:#C97B2A; color:white; }
-.categorias-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; max-width:700px; margin:0 auto 20px; }
-.categoria-zona { background:white; border:3px solid #E8D5B7; border-radius:16px; padding:16px; min-height:100px; }
-.categoria-zona.activa { border-color:#C97B2A; }
-.categoria-zona.completa { border-color:#4CAF50; background:#E8F5E9; }
-.categoria-nombre { font-size:20px; font-weight:bold; color:#5C3D1E; margin-bottom:10px; text-align:center; }
-.palabras-en-zona { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
-.palabra-colocada { font-size:18px; background:#FFF3E0; border:1px solid #E8D5B7; border-radius:8px; padding:6px 12px; color:#5C3D1E; }
+.categorias-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; max-width:700px; margin:0 auto 18px; }
+.categoria-zona { background:white; border:3px solid #E8D5B7; border-radius:16px; padding:14px; min-height:90px; cursor:pointer; }
+.categoria-zona:hover { border-color:#C97B2A; }
+.categoria-nombre { font-size:18px; font-weight:bold; color:#5C3D1E; margin-bottom:8px; text-align:center; }
+.palabras-en-zona { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; }
+.palabra-colocada { font-size:16px; background:#FFF3E0; border:1px solid #E8D5B7; border-radius:8px; padding:5px 10px; color:#5C3D1E; }
 
-@media(max-width:600px) { .grid-juegos { grid-template-columns:1fr 1fr; } }
+/* ── CÁLCULO ── */
+.operacion-box { background:white; border-radius:20px; border:3px solid #E8D5B7; padding:36px; text-align:center; max-width:560px; margin:0 auto 24px; font-size:42px; color:#5C3D1E; font-weight:bold; }
+.opciones-calculo { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; max-width:560px; margin:0 auto 18px; }
+.opcion-calc-btn { font-size:30px; font-weight:bold; background:#FFF3E0; border:2px solid #E8D5B7; border-radius:14px; padding:20px; cursor:pointer; font-family:Georgia,serif; color:#5C3D1E; }
+.opcion-calc-btn:hover { background:#FFE0B2; }
+.opcion-calc-btn.correcto { background:#C8E6C9; border-color:#4CAF50; }
+.opcion-calc-btn.incorrecto { background:#FFCDD2; border-color:#F44336; }
+
+/* ── AÑO ── */
+.evento-box { background:white; border-radius:20px; border:3px solid #E8D5B7; padding:30px; text-align:center; max-width:660px; margin:0 auto 22px; font-size:26px; color:#5C3D1E; line-height:1.5; }
+.opciones-anyo { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; max-width:560px; margin:0 auto 18px; }
+.opcion-anyo-btn { font-size:26px; font-weight:bold; background:#FFF3E0; border:2px solid #E8D5B7; border-radius:14px; padding:18px; cursor:pointer; font-family:Georgia,serif; color:#5C3D1E; }
+.opcion-anyo-btn:hover { background:#FFE0B2; }
+.opcion-anyo-btn.correcto { background:#C8E6C9; border-color:#4CAF50; }
+.opcion-anyo-btn.incorrecto { background:#FFCDD2; border-color:#F44336; }
+
+/* ── SERIE ── */
+.serie-box { background:white; border-radius:20px; border:3px solid #E8D5B7; padding:30px; text-align:center; max-width:660px; margin:0 auto 22px; font-size:36px; color:#5C3D1E; letter-spacing:4px; }
+.opciones-serie { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; max-width:500px; margin:0 auto 18px; }
+.opcion-serie-btn { font-size:28px; font-weight:bold; background:#FFF3E0; border:2px solid #E8D5B7; border-radius:14px; padding:18px; cursor:pointer; font-family:Georgia,serif; color:#5C3D1E; }
+.opcion-serie-btn:hover { background:#FFE0B2; }
+.opcion-serie-btn.correcto { background:#C8E6C9; border-color:#4CAF50; }
+.opcion-serie-btn.incorrecto { background:#FFCDD2; border-color:#F44336; }
+
+footer { text-align:center; padding:30px 0 10px; font-size:16px; color:#8B6340; font-family:Georgia,serif; margin-top:20px; }
+@media(max-width:600px) { .grid-juegos { grid-template-columns:1fr 1fr; } .jugadores-grid { grid-template-columns:1fr 1fr; } }
 </style>
 </head>
 <body>
 
+<!-- BIENVENIDA -->
+<div id="pantalla-bienvenida">
+  <div class="bienvenida-titulo">🌻 Juegos para la Memoria</div>
+  <div class="bienvenida-sub">¿Quién juega hoy?</div>
+  <div class="jugadores-grid">
+    <div class="jugador-btn" onclick="elegirJugador('Federico','🌟')">
+      <span class="jugador-icono">🌟</span>
+      <div class="jugador-nombre">Federico</div>
+    </div>
+    <div class="jugador-btn" onclick="elegirJugador('Begoña','🌸')">
+      <span class="jugador-icono">🌸</span>
+      <div class="jugador-nombre">Begoña</div>
+    </div>
+  </div>
+  <button class="btn-ranking-top" onclick="mostrarRanking()">🏆 Ver ranking</button>
+</div>
+
 <!-- INICIO -->
 <div id="pantalla-inicio">
-  <div class="titulo-principal">🌻 Juegos para la Memoria de la abuela y el abuelo también</div>
-  <div class="subtitulo">Elige un juego para empezar</div>
+  <div class="saludo" id="saludo-jugador"></div>
+  <div class="subtitulo">¿A qué jugamos hoy?</div>
   <div class="grid-juegos">
     <div class="tarjeta-juego" onclick="ir('memory')"><span class="icono">🃏</span><div class="nombre">Memory</div><div class="descripcion">Encuentra las parejas de cartas</div></div>
     <div class="tarjeta-juego" onclick="ir('refranes')"><span class="icono">💬</span><div class="nombre">Refranes</div><div class="descripcion">Completa el refrán que falta</div></div>
@@ -111,13 +182,23 @@ body { font-family: Georgia, serif; background: #FFF8F0; min-height: 100vh; disp
     <div class="tarjeta-juego" onclick="ir('intrusa')"><span class="icono">🚫</span><div class="nombre">La Intrusa</div><div class="descripcion">¿Qué palabra no encaja?</div></div>
     <div class="tarjeta-juego" onclick="ir('anagrama')"><span class="icono">🔤</span><div class="nombre">Anagramas</div><div class="descripcion">Ordena las letras y forma la palabra</div></div>
     <div class="tarjeta-juego" onclick="ir('definicion')"><span class="icono">📖</span><div class="nombre">¿Qué significa?</div><div class="descripcion">Une la palabra con su significado</div></div>
-    <div class="tarjeta-juego" onclick="ir('categorias')" style="grid-column:2"><span class="icono">🗂️</span><div class="nombre">Categorías</div><div class="descripcion">Agrupa las palabras por tipo</div></div>
+    <div class="tarjeta-juego" onclick="ir('categorias')"><span class="icono">🗂️</span><div class="nombre">Categorías</div><div class="descripcion">Agrupa las palabras por tipo</div></div>
+    <div class="tarjeta-juego" onclick="ir('calculo')"><span class="icono">🔢</span><div class="nombre">Cálculo Mental</div><div class="descripcion">Suma, resta y multiplica</div></div>
+    <div class="tarjeta-juego" onclick="ir('anyo')"><span class="icono">📅</span><div class="nombre">¿De qué año?</div><div class="descripcion">Adivina cuándo ocurrió</div></div>
   </div>
+  <button class="btn-cambiar" onclick="volverBienvenida()">🔄 Cambiar jugador</button>
+</div>
+
+<!-- RANKING -->
+<div id="pantalla-ranking" class="pantalla">
+  <div class="cabecera-juego"><button class="btn-volver" onclick="volverBienvenida()">← Volver</button><span class="titulo-juego">🏆 Ranking</span></div>
+  <div id="tabla-ranking"></div>
+  <button class="btn-reset" onclick="resetRanking()">🗑️ Borrar ranking</button>
 </div>
 
 <!-- MEMORY -->
 <div id="pantalla-memory" class="pantalla">
-  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">🃏 Memory</span></div>
+  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">🃏 Memory</span><span class="jugador-badge" id="badge-memory"></span></div>
   <div class="msg-juego" id="msg-memory">Encuentra las parejas 👇</div>
   <div id="tablero-memory"></div>
   <button class="btn-nuevo" onclick="iniciarMemory()">Nueva partida</button>
@@ -125,8 +206,8 @@ body { font-family: Georgia, serif; background: #FFF8F0; min-height: 100vh; disp
 
 <!-- REFRANES -->
 <div id="pantalla-refranes" class="pantalla">
-  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">💬 Refranes</span></div>
-  <div class="info-partida" id="info-refran">Pregunta 0 de 16</div>
+  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">💬 Refranes</span><span class="jugador-badge" id="badge-refranes"></span></div>
+  <div class="info-partida" id="info-refran"></div>
   <div class="msg-juego" id="msg-refran"></div>
   <div id="area-refran"><div id="texto-refran"></div><div class="opciones-refran" id="opciones-refran"></div></div>
   <div id="fin-refranes" style="display:none"></div>
@@ -135,9 +216,9 @@ body { font-family: Georgia, serif; background: #FFF8F0; min-height: 100vh; disp
 
 <!-- QUÉ FALTA -->
 <div id="pantalla-imagen" class="pantalla">
-  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">🔍 ¿Qué falta?</span></div>
-  <div class="info-partida" id="info-imagen">Turno 0 de 10</div>
-  <div id="instruccion-imagen" style="text-align:center;font-size:20px;color:#8B6340;margin-bottom:14px">Observa bien...</div>
+  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">🔍 ¿Qué falta?</span><span class="jugador-badge" id="badge-imagen"></span></div>
+  <div class="info-partida" id="info-imagen"></div>
+  <div id="instruccion-imagen" style="text-align:center;font-size:19px;color:#8B6340;margin-bottom:12px"></div>
   <div id="escena"></div>
   <div class="opciones-imagen" id="opciones-imagen"></div>
   <div class="msg-juego" id="msg-imagen"></div>
@@ -147,10 +228,10 @@ body { font-family: Georgia, serif; background: #FFF8F0; min-height: 100vh; disp
 
 <!-- INTRUSA -->
 <div id="pantalla-intrusa" class="pantalla">
-  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">🚫 La Intrusa</span></div>
-  <div class="info-partida" id="info-intrusa">Pregunta 0 de 12</div>
-  <div style="text-align:center;font-size:22px;color:#8B6340;margin-bottom:6px">¿Qué palabra no encaja con las demás?</div>
-  <div class="pista-intrusa" id="pista-intrusa"></div>
+  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">🚫 La Intrusa</span><span class="jugador-badge" id="badge-intrusa"></span></div>
+  <div class="info-partida" id="info-intrusa"></div>
+  <div style="text-align:center;font-size:20px;color:#8B6340;margin-bottom:4px">¿Qué palabra no encaja?</div>
+  <div class="pista-txt" id="pista-intrusa"></div>
   <div class="opciones-intrusa" id="opciones-intrusa"></div>
   <div class="msg-juego" id="msg-intrusa"></div>
   <div id="fin-intrusa" style="display:none"></div>
@@ -159,10 +240,10 @@ body { font-family: Georgia, serif; background: #FFF8F0; min-height: 100vh; disp
 
 <!-- ANAGRAMA -->
 <div id="pantalla-anagrama" class="pantalla">
-  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">🔤 Anagramas</span></div>
-  <div class="info-partida" id="info-anagrama">Palabra 0 de 10</div>
-  <div class="pista-anagrama" id="pista-anagrama"></div>
-  <div class="respuesta-anagrama" id="respuesta-anagrama">_ _ _</div>
+  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">🔤 Anagramas</span><span class="jugador-badge" id="badge-anagrama"></span></div>
+  <div class="info-partida" id="info-anagrama"></div>
+  <div class="pista-txt" id="pista-anagrama"></div>
+  <div class="respuesta-anagrama" id="respuesta-anagrama"></div>
   <div class="letras-anagrama" id="letras-anagrama"></div>
   <button class="btn-borrar" onclick="borrarUltimaLetra()">⬅ Borrar letra</button>
   <div class="msg-juego" id="msg-anagrama"></div>
@@ -172,8 +253,8 @@ body { font-family: Georgia, serif; background: #FFF8F0; min-height: 100vh; disp
 
 <!-- DEFINICIÓN -->
 <div id="pantalla-definicion" class="pantalla">
-  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">📖 ¿Qué significa?</span></div>
-  <div class="info-partida" id="info-definicion">Pregunta 0 de 12</div>
+  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">📖 ¿Qué significa?</span><span class="jugador-badge" id="badge-definicion"></span></div>
+  <div class="info-partida" id="info-definicion"></div>
   <div class="palabra-definicion" id="caja-definicion"></div>
   <div class="opciones-definicion" id="opciones-definicion"></div>
   <div class="msg-juego" id="msg-definicion"></div>
@@ -183,9 +264,9 @@ body { font-family: Georgia, serif; background: #FFF8F0; min-height: 100vh; disp
 
 <!-- CATEGORÍAS -->
 <div id="pantalla-categorias" class="pantalla">
-  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">🗂️ Categorías</span></div>
-  <div class="info-partida" id="info-categorias">Ronda 0 de 8</div>
-  <div style="text-align:center;font-size:20px;color:#8B6340;margin-bottom:16px">Toca una palabra y luego la categoría donde va</div>
+  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">🗂️ Categorías</span><span class="jugador-badge" id="badge-categorias"></span></div>
+  <div class="info-partida" id="info-categorias"></div>
+  <div style="text-align:center;font-size:18px;color:#8B6340;margin-bottom:14px">Toca una palabra y luego la categoría donde va</div>
   <div class="palabras-categoria" id="palabras-categoria"></div>
   <div class="categorias-grid" id="categorias-grid"></div>
   <div class="msg-juego" id="msg-categorias"></div>
@@ -193,62 +274,164 @@ body { font-family: Georgia, serif; background: #FFF8F0; min-height: 100vh; disp
   <button id="btn-sig-categorias" class="btn-nuevo" style="display:none" onclick="siguienteCategorias()">Siguiente ronda →</button>
 </div>
 
-<footer style="text-align:center; padding: 30px 0 10px; font-size:16px; color:#8B6340; font-family:Georgia,serif;">
-  Hecho con todo mi cariño para vosotros 👌❤️🥰🌟❤️<br>
-  <span style="font-size:14px;">Diseñado by Bhg abril 2026</span>
-</footer>
+<!-- CÁLCULO MENTAL -->
+<div id="pantalla-calculo" class="pantalla">
+  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">🔢 Cálculo Mental</span><span class="jugador-badge" id="badge-calculo"></span></div>
+  <div class="info-partida" id="info-calculo"></div>
+  <div class="operacion-box" id="operacion-box"></div>
+  <div class="opciones-calculo" id="opciones-calculo"></div>
+  <div class="msg-juego" id="msg-calculo"></div>
+  <div id="fin-calculo" style="display:none"></div>
+  <button id="btn-sig-calculo" class="btn-nuevo" onclick="siguienteCalculo()">Siguiente →</button>
+</div>
+
+<!-- ¿DE QUÉ AÑO? -->
+<div id="pantalla-anyo" class="pantalla">
+  <div class="cabecera-juego"><button class="btn-volver" onclick="ir('inicio')">← Volver</button><span class="titulo-juego">📅 ¿De qué año?</span><span class="jugador-badge" id="badge-anyo"></span></div>
+  <div class="info-partida" id="info-anyo"></div>
+  <div class="evento-box" id="evento-box"></div>
+  <div class="opciones-anyo" id="opciones-anyo"></div>
+  <div class="msg-juego" id="msg-anyo"></div>
+  <div id="fin-anyo" style="display:none"></div>
+  <button id="btn-sig-anyo" class="btn-nuevo" onclick="siguienteAnyo()">Siguiente →</button>
+</div>
+
+<footer>Hecho con todo mi cariño para vosotros 💛<br><span style="font-size:14px">Diseñado por Bego</span></footer>
 
 <script>
-// ══ NAVEGACIÓN ══
-function ir(juego) {
-  document.querySelectorAll('.pantalla, #pantalla-inicio').forEach(p => p.style.display = 'none');
-  if (juego === 'inicio') { document.getElementById('pantalla-inicio').style.display = 'block'; return; }
-  document.getElementById('pantalla-' + juego).style.display = 'block';
-  if (juego === 'memory') iniciarMemory();
-  if (juego === 'refranes') { iniciarRefranes(); }
-  if (juego === 'imagen') { iniciarImagenes(); }
-  if (juego === 'intrusa') { iniciarIntrusa(); }
-  if (juego === 'anagrama') { iniciarAnagrama(); }
-  if (juego === 'definicion') { iniciarDefinicion(); }
-  if (juego === 'categorias') { iniciarCategorias(); }
+// ══ JUGADOR ACTUAL ══
+let jugador = { nombre: '', icono: '' };
+
+const JUEGOS_NOMBRES = {
+  memory:'Memory', refranes:'Refranes', imagen:'¿Qué falta?',
+  intrusa:'La Intrusa', anagrama:'Anagramas', definicion:'¿Qué significa?',
+  categorias:'Categorías', calculo:'Cálculo Mental', anyo:'¿De qué año?'
+};
+
+function elegirJugador(nombre, icono) {
+  jugador = { nombre, icono };
+  document.getElementById('pantalla-bienvenida').style.display = 'none';
+  document.getElementById('pantalla-inicio').style.display = 'block';
+  document.getElementById('saludo-jugador').textContent = icono + ' ¡Hola ' + nombre + '! ¿A qué jugamos hoy?';
 }
 
-function pantallaFin(idFin, idArea, idBtn, aciertos, total, msgs) {
-  if (idArea) idArea.forEach(id => { const el = document.getElementById(id); if(el) el.style.display='none'; });
+function volverBienvenida() {
+  document.querySelectorAll('.pantalla').forEach(p => p.style.display = 'none');
+  document.getElementById('pantalla-inicio').style.display = 'none';
+  document.getElementById('pantalla-bienvenida').style.display = 'block';
+}
+
+function setBadges(juego) {
+  const el = document.getElementById('badge-' + juego);
+  if (el) el.textContent = jugador.icono + ' ' + jugador.nombre;
+}
+
+// ══ RANKING (localStorage) ══
+function getRanking() {
+  try { return JSON.parse(localStorage.getItem('ranking_juegos')) || {}; } catch(e) { return {}; }
+}
+function saveRanking(r) { localStorage.setItem('ranking_juegos', JSON.stringify(r)); }
+function guardarResultado(juego, aciertos, total) {
+  const r = getRanking();
+  if (!r[jugador.nombre]) r[jugador.nombre] = {};
+  if (!r[jugador.nombre][juego]) r[jugador.nombre][juego] = { aciertos: 0, total: 0, partidas: 0 };
+  r[jugador.nombre][juego].aciertos += aciertos;
+  r[jugador.nombre][juego].total += total;
+  r[jugador.nombre][juego].partidas += 1;
+  saveRanking(r);
+}
+function mostrarRanking() {
+  document.getElementById('pantalla-bienvenida').style.display = 'none';
+  document.getElementById('pantalla-inicio').style.display = 'none';
+  document.querySelectorAll('.pantalla').forEach(p => p.style.display = 'none');
+  document.getElementById('pantalla-ranking').style.display = 'block';
+  const r = getRanking();
+  const jugadores = ['Federico', 'Begoña'];
+  const iconos = { Federico: '🌟', Begoña: '🌸' };
+  const juegos = Object.keys(JUEGOS_NOMBRES);
+  let html = '<table class="ranking-tabla"><thead><tr><th>Juego</th>';
+  jugadores.forEach(j => html += '<th>' + iconos[j] + ' ' + j + '</th>');
+  html += '</tr></thead><tbody>';
+  juegos.forEach(jid => {
+    html += '<tr><td><strong>' + JUEGOS_NOMBRES[jid] + '</strong></td>';
+    const puntos = jugadores.map(j => {
+      const d = r[j] && r[j][jid];
+      if (!d || d.total === 0) return -1;
+      return Math.round(d.aciertos / d.total * 100);
+    });
+    const max = Math.max(...puntos);
+    jugadores.forEach((j, i) => {
+      const d = r[j] && r[j][jid];
+      if (!d || d.total === 0) { html += '<td style="color:#ccc">—</td>'; return; }
+      const pct = Math.round(d.aciertos / d.total * 100);
+      const corona = (pct === max && max >= 0 && puntos.filter(p=>p===max).length===1) ? ' 👑' : '';
+      html += '<td>' + d.aciertos + '/' + d.total + ' <span style="font-size:14px;color:#8B6340">(' + pct + '%)</span>' + corona + '</td>';
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('tabla-ranking').innerHTML = html;
+}
+function resetRanking() {
+  if (confirm('¿Seguro que queréis borrar todo el ranking? Esta acción no se puede deshacer.')) {
+    localStorage.removeItem('ranking_juegos');
+    mostrarRanking();
+  }
+}
+
+// ══ NAVEGACIÓN ══
+function ir(juego) {
+  document.querySelectorAll('.pantalla').forEach(p => p.style.display = 'none');
+  document.getElementById('pantalla-inicio').style.display = 'none';
+  if (juego === 'inicio') { document.getElementById('pantalla-inicio').style.display = 'block'; return; }
+  document.getElementById('pantalla-' + juego).style.display = 'block';
+  setBadges(juego);
+  if (juego==='memory') iniciarMemory();
+  if (juego==='refranes') iniciarRefranes();
+  if (juego==='imagen') iniciarImagenes();
+  if (juego==='intrusa') iniciarIntrusa();
+  if (juego==='anagrama') iniciarAnagrama();
+  if (juego==='definicion') iniciarDefinicion();
+  if (juego==='categorias') iniciarCategorias();
+  if (juego==='calculo') iniciarCalculo();
+  if (juego==='anyo') iniciarAnyo();
+}
+
+function pantallaFin(idFin, ocultarIds, idBtn, aciertos, total, msgs, juegoKey) {
+  guardarResultado(juegoKey, aciertos, total);
+  ocultarIds.forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
   document.getElementById(idBtn).style.display = 'none';
   const pct = Math.round(aciertos/total*100);
-  const msg = pct===100 ? msgs[0] : pct>=75 ? msgs[1] : pct>=50 ? msgs[2] : msgs[3];
+  const msg = pct===100?msgs[0]:pct>=75?msgs[1]:pct>=50?msgs[2]:msgs[3];
   const fin = document.getElementById(idFin);
   fin.style.display = 'block';
-  fin.innerHTML = '<div class="pantalla-fin"><div class="fin-emoji">🎊</div><div class="fin-titulo">'+msg+'</div><div class="fin-puntos">Has acertado <strong>'+aciertos+'</strong> de <strong>'+total+'</strong></div><button class="btn-nuevo" onclick="ir(\''+idFin.replace('fin-','')+'\')" >Jugar otra partida</button></div>';
+  fin.innerHTML = '<div class="pantalla-fin"><div class="fin-emoji">🎊</div>' +
+    '<div class="fin-titulo">¡' + jugador.nombre + '! ' + msg + '</div>' +
+    '<div class="fin-puntos">Has acertado <strong>' + aciertos + '</strong> de <strong>' + total + '</strong></div>' +
+    '<button class="btn-nuevo" onclick="ir(\'' + juegoKey + '\')">Jugar otra partida</button>' +
+    '<br><br><button class="btn-cambiar" onclick="mostrarRanking()">🏆 Ver ranking</button></div>';
 }
 
 // ══ MEMORY ══
-const pares = ['🌸','🌻','🍎','🐶','🏠','🚂','🦋','🌙'];
-let cartasVolteadas=[], cartasBloqueadas=false, encontradas=0;
+const pares=['🌸','🌻','🍎','🐶','🏠','🚂','🦋','🌙'];
+let cartasVolteadas=[],cartasBloqueadas=false,encontradas=0;
 function iniciarMemory() {
-  const tablero = document.getElementById('tablero-memory');
-  document.getElementById('msg-memory').textContent = 'Encuentra las parejas 👇';
+  document.getElementById('msg-memory').textContent='Encuentra las parejas 👇';
   encontradas=0; cartasVolteadas=[];
-  const todas = [...pares,...pares].sort(()=>Math.random()-0.5);
-  tablero.innerHTML='';
-  todas.forEach((emoji,i)=>{
-    const c=document.createElement('div');
-    c.className='carta oculta'; c.dataset.valor=emoji; c.dataset.idx=i;
-    c.innerHTML='<span>'+emoji+'</span>'; c.onclick=()=>voltearCarta(c);
-    tablero.appendChild(c);
-  });
+  const todas=[...pares,...pares].sort(()=>Math.random()-0.5);
+  const tablero=document.getElementById('tablero-memory'); tablero.innerHTML='';
+  todas.forEach((e,i)=>{const c=document.createElement('div');c.className='carta oculta';c.dataset.valor=e;c.innerHTML='<span>'+e+'</span>';c.onclick=()=>voltearCarta(c);tablero.appendChild(c);});
 }
 function voltearCarta(c) {
-  if(cartasBloqueadas||c.classList.contains('encontrada')||cartasVolteadas.includes(c)) return;
-  c.classList.remove('oculta'); c.classList.add('volteada'); cartasVolteadas.push(c);
+  if(cartasBloqueadas||c.classList.contains('encontrada')||cartasVolteadas.includes(c))return;
+  c.classList.remove('oculta');c.classList.add('volteada');cartasVolteadas.push(c);
   if(cartasVolteadas.length===2){cartasBloqueadas=true;setTimeout(comprobarPar,900);}
 }
 function comprobarPar() {
-  const [c1,c2]=cartasVolteadas;
-  if(c1.dataset.valor===c2.dataset.valor){c1.classList.add('encontrada');c2.classList.add('encontrada');encontradas++;if(encontradas===pares.length)document.getElementById('msg-memory').textContent='🎉 ¡Enhorabuena! ¡Todas las parejas encontradas!';}
+  const[c1,c2]=cartasVolteadas;
+  if(c1.dataset.valor===c2.dataset.valor){c1.classList.add('encontrada');c2.classList.add('encontrada');encontradas++;if(encontradas===pares.length){document.getElementById('msg-memory').textContent='🎉 ¡'+jugador.nombre+', has encontrado todas las parejas!';guardarResultado('memory',pares.length,pares.length);}}
   else{c1.classList.remove('volteada');c2.classList.remove('volteada');c1.classList.add('oculta');c2.classList.add('oculta');}
-  cartasVolteadas=[]; cartasBloqueadas=false;
+  cartasVolteadas=[];cartasBloqueadas=false;
 }
 
 // ══ REFRANES ══
@@ -294,39 +477,11 @@ const refranes=[
   {t:'Agua que no has de beber,',h:'déjala correr',o:['déjala correr','no la toques ni ver','guárdala para after']},
   {t:'El que avisa',h:'no es traidor',o:['no es traidor','ya cumplió','tiene razón']},
 ];
-const TOTAL_R=16; let rPartida=[], rIdx=0, rAciertos=0, rRespondido=false;
-function iniciarRefranes() {
-  rPartida=[...refranes].sort(()=>Math.random()-0.5).slice(0,TOTAL_R);
-  rIdx=0; rAciertos=0; rRespondido=false;
-  document.getElementById('fin-refranes').style.display='none';
-  document.getElementById('area-refran').style.display='block';
-  document.getElementById('btn-sig-refran').style.display='block';
-  document.getElementById('msg-refran').textContent='';
-  mostrarRefran();
-}
-function mostrarRefran() {
-  const r=rPartida[rIdx];
-  document.getElementById('info-refran').textContent='Pregunta '+(rIdx+1)+' de '+TOTAL_R+' — Aciertos: '+rAciertos;
-  document.getElementById('texto-refran').innerHTML=r.t+' <span class="hueco">___________</span>';
-  const ops=document.getElementById('opciones-refran'); ops.innerHTML='';
-  [...r.o].sort(()=>Math.random()-0.5).forEach(op=>{
-    const b=document.createElement('button'); b.className='opcion-btn'; b.textContent=op;
-    b.onclick=()=>responderRefran(b,op===r.h,r); ops.appendChild(b);
-  });
-  rRespondido=false; document.getElementById('msg-refran').textContent='';
-}
-function responderRefran(btn,ok,r) {
-  if(rRespondido) return; rRespondido=true;
-  document.querySelectorAll('.opcion-btn').forEach(b=>b.disabled=true);
-  if(ok){btn.classList.add('correcto');rAciertos++;document.getElementById('msg-refran').textContent='✅ ¡Muy bien!';}
-  else{btn.classList.add('incorrecto');document.querySelectorAll('.opcion-btn').forEach(b=>{if(b.textContent===r.h)b.classList.add('correcto');});document.getElementById('msg-refran').textContent='❌ Era: '+r.h;}
-  document.getElementById('texto-refran').innerHTML=r.t+' <strong style="color:#C97B2A">'+r.h+'</strong>';
-}
-function siguienteRefran() {
-  rIdx++;
-  if(rIdx>=TOTAL_R){pantallaFin('fin-refranes',['area-refran'],'btn-sig-refran',rAciertos,TOTAL_R,['🏆 ¡Todos acertados!','🎉 ¡Muy bien hecho!','👏 ¡Buen intento!','💪 ¡A seguir practicando!']);return;}
-  mostrarRefran();
-}
+const TOTAL_R=16; let rP=[],rIdx=0,rAc=0,rResp=false;
+function iniciarRefranes(){rP=[...refranes].sort(()=>Math.random()-0.5).slice(0,TOTAL_R);rIdx=0;rAc=0;document.getElementById('fin-refranes').style.display='none';document.getElementById('area-refran').style.display='block';document.getElementById('btn-sig-refran').style.display='block';document.getElementById('msg-refran').textContent='';mostrarRefran();}
+function mostrarRefran(){rResp=false;document.getElementById('msg-refran').textContent='';const r=rP[rIdx];document.getElementById('info-refran').textContent='Pregunta '+(rIdx+1)+' de '+TOTAL_R+' — Aciertos: '+rAc;document.getElementById('texto-refran').innerHTML=r.t+' <span class="hueco">___________</span>';const ops=document.getElementById('opciones-refran');ops.innerHTML='';[...r.o].sort(()=>Math.random()-0.5).forEach(op=>{const b=document.createElement('button');b.className='opcion-btn';b.textContent=op;b.onclick=()=>respRefran(b,op===r.h,r);ops.appendChild(b);});}
+function respRefran(btn,ok,r){if(rResp)return;rResp=true;document.querySelectorAll('.opcion-btn').forEach(b=>b.disabled=true);if(ok){btn.classList.add('correcto');rAc++;document.getElementById('msg-refran').textContent='✅ ¡Muy bien!';}else{btn.classList.add('incorrecto');document.querySelectorAll('.opcion-btn').forEach(b=>{if(b.textContent===r.h)b.classList.add('correcto');});document.getElementById('msg-refran').textContent='❌ Era: '+r.h;}document.getElementById('texto-refran').innerHTML=r.t+' <strong style="color:#C97B2A">'+r.h+'</strong>';}
+function siguienteRefran(){rIdx++;if(rIdx>=TOTAL_R){pantallaFin('fin-refranes',['area-refran'],'btn-sig-refran',rAc,TOTAL_R,['🏆 ¡Todos acertados!','🎉 ¡Muy bien hecho!','👏 ¡Buen intento!','💪 ¡A seguir practicando!'],'refranes');return;}mostrarRefran();}
 
 // ══ QUÉ FALTA ══
 const escenas=[
@@ -341,47 +496,13 @@ const escenas=[
   {n:'La frutería',o:['🍎','🍌','🍇','🍓','🍑','🍐'],q:'🍑',d:['🍓','🍌','🍐']},
   {n:'La farmacia',o:['💊','🩹','🌡️','💉','🧴','🩺'],q:'🌡️',d:['🩹','🧴','💊']},
 ];
-const TOTAL_I=10; let iPartida=[], iIdx=0, iAciertos=0, iRespondido=false, iTimer;
-function iniciarImagenes() {
-  iPartida=[...escenas].sort(()=>Math.random()-0.5).slice(0,TOTAL_I);
-  iIdx=0; iAciertos=0;
-  document.getElementById('fin-imagenes').style.display='none';
-  document.getElementById('escena').style.display='block';
-  document.getElementById('instruccion-imagen').style.display='block';
-  document.getElementById('opciones-imagen').style.display='grid';
-  document.getElementById('btn-sig-imagen').style.display='block';
-  mostrarImagen();
-}
-function mostrarImagen() {
-  clearTimeout(iTimer); iRespondido=false;
-  document.getElementById('msg-imagen').textContent='';
-  document.getElementById('opciones-imagen').innerHTML='';
-  const e=iPartida[iIdx];
-  document.getElementById('info-imagen').textContent='Turno '+(iIdx+1)+' de '+TOTAL_I+' — Aciertos: '+iAciertos;
-  document.getElementById('instruccion-imagen').textContent='👀 Fíjate bien... ('+e.n+')';
-  document.getElementById('escena').textContent=e.o.join('  ');
-  iTimer=setTimeout(()=>{
-    document.getElementById('escena').textContent=e.o.filter(x=>x!==e.q).join('  ');
-    document.getElementById('instruccion-imagen').textContent='¿Qué objeto ha desaparecido?';
-    const opts=[e.q,...e.d.slice(0,2)].sort(()=>Math.random()-0.5);
-    const cont=document.getElementById('opciones-imagen'); cont.innerHTML='';
-    opts.forEach(op=>{const b=document.createElement('button');b.className='opcion-img-btn';b.textContent=op;b.onclick=()=>responderImagen(b,op===e.q);cont.appendChild(b);});
-  },4000);
-}
-function responderImagen(btn,ok) {
-  if(iRespondido) return; iRespondido=true;
-  document.querySelectorAll('.opcion-img-btn').forEach(b=>b.disabled=true);
-  if(ok){btn.classList.add('correcto');iAciertos++;document.getElementById('msg-imagen').textContent='✅ ¡Muy bien!';}
-  else{btn.classList.add('incorrecto');document.getElementById('msg-imagen').textContent='❌ ¡Casi!';}
-  document.getElementById('info-imagen').textContent='Turno '+(iIdx+1)+' de '+TOTAL_I+' — Aciertos: '+iAciertos;
-}
-function siguienteImagen() {
-  iIdx++;
-  if(iIdx>=TOTAL_I){pantallaFin('fin-imagenes',['escena','instruccion-imagen','opciones-imagen'],'btn-sig-imagen',iAciertos,TOTAL_I,['🏆 ¡Memoria de elefante!','🎉 ¡Qué buena memoria!','👏 ¡Buen intento!','💪 ¡A seguir entrenando!']);return;}
-  mostrarImagen();
-}
+const TOTAL_I=10; let iP=[],iIdx=0,iAc=0,iResp=false,iTimer;
+function iniciarImagenes(){iP=[...escenas].sort(()=>Math.random()-0.5).slice(0,TOTAL_I);iIdx=0;iAc=0;document.getElementById('fin-imagenes').style.display='none';document.getElementById('escena').style.display='block';document.getElementById('instruccion-imagen').style.display='block';document.getElementById('opciones-imagen').style.display='grid';document.getElementById('btn-sig-imagen').style.display='block';mostrarImagen();}
+function mostrarImagen(){clearTimeout(iTimer);iResp=false;document.getElementById('msg-imagen').textContent='';document.getElementById('opciones-imagen').innerHTML='';const e=iP[iIdx];document.getElementById('info-imagen').textContent='Turno '+(iIdx+1)+' de '+TOTAL_I+' — Aciertos: '+iAc;document.getElementById('instruccion-imagen').textContent='👀 Fíjate bien... ('+e.n+')';document.getElementById('escena').textContent=e.o.join('  ');iTimer=setTimeout(()=>{document.getElementById('escena').textContent=e.o.filter(x=>x!==e.q).join('  ');document.getElementById('instruccion-imagen').textContent='¿Qué objeto ha desaparecido?';const opts=[e.q,...e.d.slice(0,2)].sort(()=>Math.random()-0.5);const cont=document.getElementById('opciones-imagen');cont.innerHTML='';opts.forEach(op=>{const b=document.createElement('button');b.className='opcion-img-btn';b.textContent=op;b.onclick=()=>respImagen(b,op===e.q);cont.appendChild(b);});},4000);}
+function respImagen(btn,ok){if(iResp)return;iResp=true;document.querySelectorAll('.opcion-img-btn').forEach(b=>b.disabled=true);if(ok){btn.classList.add('correcto');iAc++;document.getElementById('msg-imagen').textContent='✅ ¡Muy bien!';}else{btn.classList.add('incorrecto');document.getElementById('msg-imagen').textContent='❌ ¡Casi!';}document.getElementById('info-imagen').textContent='Turno '+(iIdx+1)+' de '+TOTAL_I+' — Aciertos: '+iAc;}
+function siguienteImagen(){iIdx++;if(iIdx>=TOTAL_I){pantallaFin('fin-imagenes',['escena','instruccion-imagen','opciones-imagen'],'btn-sig-imagen',iAc,TOTAL_I,['🏆 ¡Memoria de elefante!','🎉 ¡Qué buena memoria!','👏 ¡Buen intento!','💪 ¡A seguir entrenando!'],'imagen');return;}mostrarImagen();}
 
-// ══ LA INTRUSA ══
+// ══ INTRUSA ══
 const intrusas=[
   {p:['perro','gato','paloma','delfín'],i:'paloma',pista:'Tres son animales domésticos...'},
   {p:['rosa','tulipán','clavel','roble'],i:'roble',pista:'Tres son flores...'},
@@ -411,109 +532,23 @@ const intrusas=[
   {p:['pirámide','trapecio','rombo','parábola'],i:'parábola',pista:'Tres son figuras geométricas...'},
   {p:['efímero','perenne','fugaz','volátil'],i:'perenne',pista:'Tres significan que dura muy poco...'},
 ];
-const TOTAL_INT=12; let intPartida=[], intIdx=0, intAciertos=0, intRespondido=false;
-function iniciarIntrusa() {
-  intPartida=[...intrusas].sort(()=>Math.random()-0.5).slice(0,TOTAL_INT);
-  intIdx=0; intAciertos=0;
-  document.getElementById('fin-intrusa').style.display='none';
-  document.getElementById('opciones-intrusa').style.display='grid';
-  document.getElementById('btn-sig-intrusa').style.display='block';
-  mostrarIntrusa();
-}
-function mostrarIntrusa() {
-  intRespondido=false;
-  document.getElementById('msg-intrusa').textContent='';
-  document.getElementById('info-intrusa').textContent='Pregunta '+(intIdx+1)+' de '+TOTAL_INT+' — Aciertos: '+intAciertos;
-  const q=intPartida[intIdx];
-  document.getElementById('pista-intrusa').textContent=q.pista;
-  const cont=document.getElementById('opciones-intrusa'); cont.innerHTML='';
-  [...q.p].sort(()=>Math.random()-0.5).forEach(p=>{
-    const b=document.createElement('button'); b.className='opcion-intrusa-btn'; b.textContent=p;
-    b.onclick=()=>responderIntrusa(b,p===q.i,q.i); cont.appendChild(b);
-  });
-}
-function responderIntrusa(btn,ok,correcta) {
-  if(intRespondido) return; intRespondido=true;
-  document.querySelectorAll('.opcion-intrusa-btn').forEach(b=>b.disabled=true);
-  if(ok){btn.classList.add('correcto');intAciertos++;document.getElementById('msg-intrusa').textContent='✅ ¡Exacto!';}
-  else{btn.classList.add('incorrecto');document.querySelectorAll('.opcion-intrusa-btn').forEach(b=>{if(b.textContent===correcta)b.classList.add('correcto');});document.getElementById('msg-intrusa').textContent='❌ Era: '+correcta;}
-}
-function siguienteIntrusa() {
-  intIdx++;
-  if(intIdx>=TOTAL_INT){pantallaFin('fin-intrusa',['opciones-intrusa'],'btn-sig-intrusa',intAciertos,TOTAL_INT,['🏆 ¡Sin fallar una!','🎉 ¡Muy agudo!','👏 ¡Buen intento!','💪 ¡A seguir practicando!']);return;}
-  mostrarIntrusa();
-}
+const TOTAL_INT=12; let intP=[],intIdx=0,intAc=0,intResp=false;
+function iniciarIntrusa(){intP=[...intrusas].sort(()=>Math.random()-0.5).slice(0,TOTAL_INT);intIdx=0;intAc=0;document.getElementById('fin-intrusa').style.display='none';document.getElementById('opciones-intrusa').style.display='grid';document.getElementById('btn-sig-intrusa').style.display='block';mostrarIntrusa();}
+function mostrarIntrusa(){intResp=false;document.getElementById('msg-intrusa').textContent='';document.getElementById('info-intrusa').textContent='Pregunta '+(intIdx+1)+' de '+TOTAL_INT+' — Aciertos: '+intAc;const q=intP[intIdx];document.getElementById('pista-intrusa').textContent=q.pista;const cont=document.getElementById('opciones-intrusa');cont.innerHTML='';[...q.p].sort(()=>Math.random()-0.5).forEach(p=>{const b=document.createElement('button');b.className='opcion-intrusa-btn';b.textContent=p;b.onclick=()=>respIntrusa(b,p===q.i,q.i);cont.appendChild(b);});}
+function respIntrusa(btn,ok,correcta){if(intResp)return;intResp=true;document.querySelectorAll('.opcion-intrusa-btn').forEach(b=>b.disabled=true);if(ok){btn.classList.add('correcto');intAc++;document.getElementById('msg-intrusa').textContent='✅ ¡Exacto!';}else{btn.classList.add('incorrecto');document.querySelectorAll('.opcion-intrusa-btn').forEach(b=>{if(b.textContent===correcta)b.classList.add('correcto');});document.getElementById('msg-intrusa').textContent='❌ Era: '+correcta;}}
+function siguienteIntrusa(){intIdx++;if(intIdx>=TOTAL_INT){pantallaFin('fin-intrusa',['opciones-intrusa'],'btn-sig-intrusa',intAc,TOTAL_INT,['🏆 ¡Sin fallar una!','🎉 ¡Muy agudo!','👏 ¡Buen intento!','💪 ¡A seguir practicando!'],'intrusa');return;}mostrarIntrusa();}
 
 // ══ ANAGRAMAS ══
 const anagramas=[
-  {p:'GATO',pista:'Animal doméstico que maúlla'},
-  {p:'MESA',pista:'Mueble donde se come'},
-  {p:'LUNA',pista:'Sale de noche en el cielo'},
-  {p:'ROSA',pista:'Flor con espinas'},
-  {p:'TREN',pista:'Viaja por raíles'},
-  {p:'PERA',pista:'Fruta amarilla o verde'},
-  {p:'LIBRO',pista:'Se lee y tiene páginas'},
-  {p:'CAMPO',pista:'Zona rural con naturaleza'},
-  {p:'PLATO',pista:'Se usa para servir comida'},
-  {p:'NIEVE',pista:'Agua helada que cae en invierno'},
-  {p:'CARTA',pista:'Escrita a mano y enviada por correo'},
-  {p:'BARCA',pista:'Pequeño barco'},
-  {p:'FUEGO',pista:'Llamas y calor'},
-  {p:'CALLE',pista:'Por donde se camina en la ciudad'},
-  {p:'ÁRBOL',pista:'Tiene tronco, ramas y hojas'},
+  {p:'GATO',pista:'Animal doméstico que maúlla'},{p:'MESA',pista:'Mueble donde se come'},{p:'LUNA',pista:'Sale de noche en el cielo'},{p:'ROSA',pista:'Flor con espinas'},{p:'TREN',pista:'Viaja por raíles'},{p:'PERA',pista:'Fruta amarilla o verde'},{p:'LIBRO',pista:'Se lee y tiene páginas'},{p:'CAMPO',pista:'Zona rural con naturaleza'},{p:'PLATO',pista:'Se usa para servir comida'},{p:'NIEVE',pista:'Agua helada que cae en invierno'},{p:'CARTA',pista:'Escrita a mano y enviada por correo'},{p:'BARCA',pista:'Pequeño barco'},{p:'FUEGO',pista:'Llamas y calor'},{p:'CALLE',pista:'Por donde se camina en la ciudad'},{p:'ÁRBOL',pista:'Tiene tronco, ramas y hojas'},
 ];
-const TOTAL_AN=10; let anPartida=[], anIdx=0, anAciertos=0, anRespuesta=[], anLetrasIdx=[];
-function iniciarAnagrama() {
-  anPartida=[...anagramas].sort(()=>Math.random()-0.5).slice(0,TOTAL_AN);
-  anIdx=0; anAciertos=0;
-  document.getElementById('fin-anagrama').style.display='none';
-  document.getElementById('btn-sig-anagrama').style.display='block';
-  mostrarAnagrama();
-}
-function mostrarAnagrama() {
-  anRespuesta=[]; anLetrasIdx=[];
-  document.getElementById('msg-anagrama').textContent='';
-  document.getElementById('info-anagrama').textContent='Palabra '+(anIdx+1)+' de '+TOTAL_AN+' — Aciertos: '+anAciertos;
-  const q=anPartida[anIdx];
-  document.getElementById('pista-anagrama').textContent='Pista: '+q.pista;
-  document.getElementById('respuesta-anagrama').textContent=Array(q.p.length).fill('_').join(' ');
-  const mezclada=[...q.p].sort(()=>Math.random()-0.5);
-  const cont=document.getElementById('letras-anagrama'); cont.innerHTML='';
-  mezclada.forEach((l,i)=>{
-    const b=document.createElement('button'); b.className='letra-btn'; b.textContent=l; b.dataset.idx=i;
-    b.onclick=()=>elegirLetra(b,l,i); cont.appendChild(b);
-  });
-}
-function elegirLetra(btn,letra,idx) {
-  if(btn.classList.contains('usada')) return;
-  btn.classList.add('usada');
-  anRespuesta.push(letra); anLetrasIdx.push(idx);
-  const q=anPartida[anIdx];
-  document.getElementById('respuesta-anagrama').textContent=anRespuesta.join(' ');
-  if(anRespuesta.length===q.p.length) comprobarAnagrama();
-}
-function borrarUltimaLetra() {
-  if(!anRespuesta.length) return;
-  anRespuesta.pop();
-  const idx=anLetrasIdx.pop();
-  document.querySelectorAll('.letra-btn').forEach(b=>{if(parseInt(b.dataset.idx)===idx)b.classList.remove('usada');});
-  const q=anPartida[anIdx];
-  const actual=anRespuesta.join(' ')+' '+Array(q.p.length-anRespuesta.length).fill('_').join(' ');
-  document.getElementById('respuesta-anagrama').textContent=actual.trim();
-}
-function comprobarAnagrama() {
-  const q=anPartida[anIdx];
-  const resp=anRespuesta.join('').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-  const corr=q.p.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-  document.querySelectorAll('.letra-btn').forEach(b=>b.disabled=true);
-  if(resp===corr){anAciertos++;document.getElementById('msg-anagrama').textContent='✅ ¡Perfecto! Es "'+q.p+'"';}
-  else{document.getElementById('msg-anagrama').textContent='❌ Era: '+q.p;}
-}
-function siguienteAnagrama() {
-  anIdx++;
-  if(anIdx>=TOTAL_AN){pantallaFin('fin-anagrama',['letras-anagrama'],'btn-sig-anagrama',anAciertos,TOTAL_AN,['🏆 ¡Todas correctas!','🎉 ¡Muy bien!','👏 ¡Buen intento!','💪 ¡A seguir!']);return;}
-  mostrarAnagrama();
-}
+const TOTAL_AN=10; let anP=[],anIdx=0,anAc=0,anResp=[],anIdx2=[];
+function iniciarAnagrama(){anP=[...anagramas].sort(()=>Math.random()-0.5).slice(0,TOTAL_AN);anIdx=0;anAc=0;document.getElementById('fin-anagrama').style.display='none';document.getElementById('btn-sig-anagrama').style.display='block';mostrarAnagrama();}
+function mostrarAnagrama(){anResp=[];anIdx2=[];document.getElementById('msg-anagrama').textContent='';document.getElementById('info-anagrama').textContent='Palabra '+(anIdx+1)+' de '+TOTAL_AN+' — Aciertos: '+anAc;const q=anP[anIdx];document.getElementById('pista-anagrama').textContent='Pista: '+q.pista;document.getElementById('respuesta-anagrama').textContent=Array(q.p.length).fill('_').join(' ');const mez=[...q.p].sort(()=>Math.random()-0.5);const cont=document.getElementById('letras-anagrama');cont.innerHTML='';mez.forEach((l,i)=>{const b=document.createElement('button');b.className='letra-btn';b.textContent=l;b.dataset.idx=i;b.onclick=()=>elegirLetra(b,l,i);cont.appendChild(b);});}
+function elegirLetra(btn,letra,idx){if(btn.classList.contains('usada'))return;btn.classList.add('usada');anResp.push(letra);anIdx2.push(idx);const q=anP[anIdx];document.getElementById('respuesta-anagrama').textContent=anResp.join(' ');if(anResp.length===q.p.length)comprobarAnagrama();}
+function borrarUltimaLetra(){if(!anResp.length)return;anResp.pop();const idx=anIdx2.pop();document.querySelectorAll('.letra-btn').forEach(b=>{if(parseInt(b.dataset.idx)===idx)b.classList.remove('usada');});const q=anP[anIdx];document.getElementById('respuesta-anagrama').textContent=(anResp.join(' ')+' '+Array(q.p.length-anResp.length).fill('_').join(' ')).trim();}
+function comprobarAnagrama(){const q=anP[anIdx];const resp=anResp.join('').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');const corr=q.p.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');document.querySelectorAll('.letra-btn').forEach(b=>b.disabled=true);if(resp===corr){anAc++;document.getElementById('msg-anagrama').textContent='✅ ¡Perfecto! Es "'+q.p+'"';}else{document.getElementById('msg-anagrama').textContent='❌ Era: '+q.p;}}
+function siguienteAnagrama(){anIdx++;if(anIdx>=TOTAL_AN){pantallaFin('fin-anagrama',['letras-anagrama'],'btn-sig-anagrama',anAc,TOTAL_AN,['🏆 ¡Todas correctas!','🎉 ¡Muy bien!','👏 ¡Buen intento!','💪 ¡A seguir!'],'anagrama');return;}mostrarAnagrama();}
 
 // ══ DEFINICIONES ══
 const definiciones=[
@@ -521,61 +556,30 @@ const definiciones=[
   {p:'COSECHA',def:'Recoger los frutos que han crecido en el campo',ops:['Recoger los frutos que han crecido en el campo','Limpiar la casa a fondo','Preparar la ropa de invierno']},
   {p:'BÓVEDA',def:'Techo curvo de una iglesia o cueva',ops:['Techo curvo de una iglesia o cueva','Caja fuerte del banco','Tipo de sombrero antiguo']},
   {p:'ZAGUÁN',def:'Entrada cubierta de una casa antigua',ops:['Entrada cubierta de una casa antigua','Tipo de baile regional','Herramienta del campo']},
-  {p:'PARSIMONIA',def:'Hacer las cosas con mucha calma y sin prisas',ops:['Hacer las cosas con mucha calma y sin prisas','Hablar muy alto en público','Comer demasiado deprisa']},
   {p:'TERTULIA',def:'Reunión de personas para charlar y debatir',ops:['Reunión de personas para charlar y debatir','Tipo de tejido para la ropa','Plato típico de Andalucía']},
   {p:'AÑORANZA',def:'Tristeza por algo o alguien que echas de menos',ops:['Tristeza por algo o alguien que echas de menos','Alegría por un regalo inesperado','Miedo a las tormentas']},
   {p:'ALACENA',def:'Armario empotrado en la pared para guardar comida',ops:['Armario empotrado en la pared para guardar comida','Tipo de silla de madera antigua','Herramienta para coser']},
   {p:'MAÑOSO',def:'Persona que hace bien las cosas con las manos',ops:['Persona que hace bien las cosas con las manos','Alguien que duerme hasta tarde','Persona que come mucho']},
   {p:'SOSIEGO',def:'Calma y tranquilidad del alma',ops:['Calma y tranquilidad del alma','Ruido fuerte de la calle','Tipo de trabajo en el campo']},
   {p:'CANDIL',def:'Lámpara de aceite que se usaba antes',ops:['Lámpara de aceite que se usaba antes','Instrumento para medir el tiempo','Recipiente para guardar agua']},
-  {p:'VERANO',def:'La estación del año con más calor y días largos',ops:['La estación del año con más calor y días largos','La época de más lluvia del año','El momento en que caen las hojas']},
   {p:'BODEGA',def:'Lugar donde se guarda y hace el vino',ops:['Lugar donde se guarda y hace el vino','Tienda donde se vende ropa','Habitación donde duermen los niños']},
   {p:'REGAZO',def:'El hueco que forman las piernas cuando estás sentado',ops:['El hueco que forman las piernas cuando estás sentado','La parte alta del brazo','El espacio entre dos sillas']},
-  {p:'MADRUGADA',def:'Las horas de la noche justo antes de amanecer',ops:['Las horas de la noche justo antes de amanecer','La hora de la siesta','El momento del atardecer']},
   {p:'EFÍMERO',def:'Algo que dura muy poco tiempo',ops:['Algo que dura muy poco tiempo','Algo muy brillante y llamativo','Algo que pesa mucho']},
   {p:'CREPÚSCULO',def:'La luz que queda en el cielo justo después de ponerse el sol',ops:['La luz que queda en el cielo justo después de ponerse el sol','El momento en que sale el sol por la mañana','La lluvia fina de otoño']},
   {p:'ERUDITO',def:'Persona que sabe mucho sobre muchos temas',ops:['Persona que sabe mucho sobre muchos temas','Persona que trabaja en el campo','Persona que habla muy deprisa']},
-  {p:'PARSIMONIA',def:'Hacer las cosas con mucha calma y sin prisas',ops:['Hacer las cosas con mucha calma y sin prisas','Hablar muy alto en público','Comer demasiado deprisa']},
   {p:'LAXITUD',def:'Falta de fuerza o energía, flojedad',ops:['Falta de fuerza o energía, flojedad','Gran entusiasmo por algo','Cualidad de ser muy ordenado']},
   {p:'EPÍTOME',def:'Resumen breve de una obra o asunto',ops:['Resumen breve de una obra o asunto','Parte final de una novela','Tipo de poema clásico griego']},
   {p:'MUNIFICENCIA',def:'Generosidad extraordinaria al dar o regalar',ops:['Generosidad extraordinaria al dar o regalar','Afición por coleccionar objetos raros','Habilidad para cocinar platos elaborados']},
   {p:'SOSLAYO',def:'De reojo, de lado, sin mirar de frente',ops:['De reojo, de lado, sin mirar de frente','Con mucha atención y cuidado','A gran velocidad y sin parar']},
   {p:'VETUSTEZ',def:'Gran antigüedad o vejez de algo',ops:['Gran antigüedad o vejez de algo','Calidad de algo recién fabricado','Brillo especial de los metales']},
   {p:'ACERVO',def:'Conjunto de bienes o conocimientos de un pueblo o cultura',ops:['Conjunto de bienes o conocimientos de un pueblo o cultura','Tipo de vasija de barro antigua','Medida antigua de longitud']},
-  {p:'PARENQUIMA',def:'Tejido principal de los órganos y las plantas',ops:['Tejido principal de los órganos y las plantas','Tipo de escritura antigua','Instrumento de medición científica']},
+  {p:'MADRUGADA',def:'Las horas de la noche justo antes de amanecer',ops:['Las horas de la noche justo antes de amanecer','La hora de la siesta','El momento del atardecer']},
 ];
-const TOTAL_DEF=12; let defPartida=[], defIdx=0, defAciertos=0, defRespondido=false;
-function iniciarDefinicion() {
-  defPartida=[...definiciones].sort(()=>Math.random()-0.5).slice(0,TOTAL_DEF);
-  defIdx=0; defAciertos=0;
-  document.getElementById('fin-definicion').style.display='none';
-  document.getElementById('opciones-definicion').style.display='flex';
-  document.getElementById('btn-sig-definicion').style.display='block';
-  mostrarDefinicion();
-}
-function mostrarDefinicion() {
-  defRespondido=false;
-  document.getElementById('msg-definicion').textContent='';
-  document.getElementById('info-definicion').textContent='Pregunta '+(defIdx+1)+' de '+TOTAL_DEF+' — Aciertos: '+defAciertos;
-  const q=defPartida[defIdx];
-  document.getElementById('caja-definicion').innerHTML='¿Qué significa <strong style="color:#C97B2A">'+q.p+'</strong>?';
-  const cont=document.getElementById('opciones-definicion'); cont.innerHTML='';
-  [...q.ops].sort(()=>Math.random()-0.5).forEach(op=>{
-    const b=document.createElement('button'); b.className='opcion-def-btn'; b.textContent=op;
-    b.onclick=()=>responderDefinicion(b,op===q.def,q.def); cont.appendChild(b);
-  });
-}
-function responderDefinicion(btn,ok,correcta) {
-  if(defRespondido) return; defRespondido=true;
-  document.querySelectorAll('.opcion-def-btn').forEach(b=>b.disabled=true);
-  if(ok){btn.classList.add('correcto');defAciertos++;document.getElementById('msg-definicion').textContent='✅ ¡Correcto!';}
-  else{btn.classList.add('incorrecto');document.querySelectorAll('.opcion-def-btn').forEach(b=>{if(b.textContent===correcta)b.classList.add('correcto');});document.getElementById('msg-definicion').textContent='❌ Mira la respuesta correcta';}
-}
-function siguienteDefinicion() {
-  defIdx++;
-  if(defIdx>=TOTAL_DEF){pantallaFin('fin-definicion',['opciones-definicion'],'btn-sig-definicion',defAciertos,TOTAL_DEF,['🏆 ¡Vocabulario de libro!','🎉 ¡Muy bien!','👏 ¡Buen intento!','💪 ¡A seguir aprendiendo!']);return;}
-  mostrarDefinicion();
-}
+const TOTAL_DEF=12; let defP=[],defIdx=0,defAc=0,defResp=false;
+function iniciarDefinicion(){defP=[...definiciones].sort(()=>Math.random()-0.5).slice(0,TOTAL_DEF);defIdx=0;defAc=0;document.getElementById('fin-definicion').style.display='none';document.getElementById('opciones-definicion').style.display='flex';document.getElementById('btn-sig-definicion').style.display='block';mostrarDefinicion();}
+function mostrarDefinicion(){defResp=false;document.getElementById('msg-definicion').textContent='';document.getElementById('info-definicion').textContent='Pregunta '+(defIdx+1)+' de '+TOTAL_DEF+' — Aciertos: '+defAc;const q=defP[defIdx];document.getElementById('caja-definicion').innerHTML='¿Qué significa <strong style="color:#C97B2A">'+q.p+'</strong>?';const cont=document.getElementById('opciones-definicion');cont.innerHTML='';[...q.ops].sort(()=>Math.random()-0.5).forEach(op=>{const b=document.createElement('button');b.className='opcion-def-btn';b.textContent=op;b.onclick=()=>respDef(b,op===q.def,q.def);cont.appendChild(b);});}
+function respDef(btn,ok,correcta){if(defResp)return;defResp=true;document.querySelectorAll('.opcion-def-btn').forEach(b=>b.disabled=true);if(ok){btn.classList.add('correcto');defAc++;document.getElementById('msg-definicion').textContent='✅ ¡Correcto!';}else{btn.classList.add('incorrecto');document.querySelectorAll('.opcion-def-btn').forEach(b=>{if(b.textContent===correcta)b.classList.add('correcto');});document.getElementById('msg-definicion').textContent='❌ Mira la respuesta correcta';}}
+function siguienteDefinicion(){defIdx++;if(defIdx>=TOTAL_DEF){pantallaFin('fin-definicion',['opciones-definicion'],'btn-sig-definicion',defAc,TOTAL_DEF,['🏆 ¡Vocabulario de libro!','🎉 ¡Muy bien!','👏 ¡Buen intento!','💪 ¡A seguir aprendiendo!'],'definicion');return;}mostrarDefinicion();}
 
 // ══ CATEGORÍAS ══
 const rondasCat=[
@@ -590,69 +594,55 @@ const rondasCat=[
   {cats:['Figuras literarias','Géneros literarios'],palabras:[{w:'Metáfora',c:'Figuras literarias'},{w:'Novela',c:'Géneros literarios'},{w:'Hipérbole',c:'Figuras literarias'},{w:'Ensayo',c:'Géneros literarios'},{w:'Ironía',c:'Figuras literarias'},{w:'Épica',c:'Géneros literarios'}]},
   {cats:['Términos de música clásica','Términos de pintura'],palabras:[{w:'Arpegio',c:'Términos de música clásica'},{w:'Gouache',c:'Términos de pintura'},{w:'Coda',c:'Términos de música clásica'},{w:'Fresco',c:'Términos de pintura'},{w:'Preludio',c:'Términos de música clásica'},{w:'Aguafuerte',c:'Términos de pintura'}]},
   {cats:['Filosofía','Ciencia'],palabras:[{w:'Empirismo',c:'Filosofía'},{w:'Fotosíntesis',c:'Ciencia'},{w:'Dialéctica',c:'Filosofía'},{w:'Entropía',c:'Ciencia'},{w:'Ontología',c:'Filosofía'},{w:'Osmosis',c:'Ciencia'}]},
-  {cats:['Palabras que significan tristeza','Palabras que significan alegría'],palabras:[{w:'Alborozo',c:'Palabras que significan alegría'},{w:'Congoja',c:'Palabras que significan tristeza'},{w:'Regocijo',c:'Palabras que significan alegría'},{w:'Pesadumbre',c:'Palabras que significan tristeza'},{w:'Júbilo',c:'Palabras que significan alegría'},{w:'Aflicción',c:'Palabras que significan tristeza'}]},
+  {cats:['Palabras de tristeza','Palabras de alegría'],palabras:[{w:'Alborozo',c:'Palabras de alegría'},{w:'Congoja',c:'Palabras de tristeza'},{w:'Regocijo',c:'Palabras de alegría'},{w:'Pesadumbre',c:'Palabras de tristeza'},{w:'Júbilo',c:'Palabras de alegría'},{w:'Aflicción',c:'Palabras de tristeza'}]},
   {cats:['Historia de España','Historia Universal'],palabras:[{w:'Reconquista',c:'Historia de España'},{w:'Revolución Francesa',c:'Historia Universal'},{w:'El Escorial',c:'Historia de España'},{w:'Renacimiento',c:'Historia Universal'},{w:'Armada Invencible',c:'Historia de España'},{w:'Guerra de Troya',c:'Historia Universal'}]},
   {cats:['Términos jurídicos','Términos médicos'],palabras:[{w:'Veredicto',c:'Términos jurídicos'},{w:'Prognosis',c:'Términos médicos'},{w:'Apelación',c:'Términos jurídicos'},{w:'Anamnesis',c:'Términos médicos'},{w:'Contencioso',c:'Términos jurídicos'},{w:'Biopsia',c:'Términos médicos'}]},
   {cats:['Escritores españoles','Pintores españoles'],palabras:[{w:'Quevedo',c:'Escritores españoles'},{w:'Murillo',c:'Pintores españoles'},{w:'Lorca',c:'Escritores españoles'},{w:'Sorolla',c:'Pintores españoles'},{w:'Unamuno',c:'Escritores españoles'},{w:'Zurbarán',c:'Pintores españoles'}]},
-  {cats:['Términos de geografía','Términos de astronomía'],palabras:[{w:'Istmo',c:'Términos de geografía'},{w:'Cénit',c:'Términos de astronomía'},{w:'Estuario',c:'Términos de geografía'},{w:'Solsticio',c:'Términos de astronomía'},{w:'Meseta',c:'Términos de geografía'},{w:'Eclipse',c:'Términos de astronomía'}]},
+  {cats:['Geografía','Astronomía'],palabras:[{w:'Istmo',c:'Geografía'},{w:'Cénit',c:'Astronomía'},{w:'Estuario',c:'Geografía'},{w:'Solsticio',c:'Astronomía'},{w:'Meseta',c:'Geografía'},{w:'Eclipse',c:'Astronomía'}]},
 ];
-const TOTAL_CAT=8; let catPartida=[], catIdx=0, catAciertos=0, catTotal=0, catSeleccionada=null, catColocadas=[];
-function iniciarCategorias() {
-  catPartida=[...rondasCat].sort(()=>Math.random()-0.5).slice(0,TOTAL_CAT);
-  catIdx=0; catAciertos=0; catTotal=0;
-  document.getElementById('fin-categorias').style.display='none';
-  document.getElementById('btn-sig-categorias').style.display='none';
-  mostrarRondaCat();
-}
-function mostrarRondaCat() {
-  catSeleccionada=null; catColocadas=[];
-  document.getElementById('msg-categorias').textContent='';
-  document.getElementById('btn-sig-categorias').style.display='none';
-  const r=catPartida[catIdx];
-  document.getElementById('info-categorias').textContent='Ronda '+(catIdx+1)+' de '+TOTAL_CAT+' — Aciertos: '+catAciertos+'/'+catTotal;
-  const pcont=document.getElementById('palabras-categoria'); pcont.innerHTML='';
-  [...r.palabras].sort(()=>Math.random()-0.5).forEach(({w})=>{
-    const b=document.createElement('button'); b.className='palabra-tag'; b.textContent=w; b.dataset.palabra=w;
-    b.onclick=()=>seleccionarPalabra(b,w); pcont.appendChild(b);
-  });
-  const gcont=document.getElementById('categorias-grid'); gcont.innerHTML='';
-  r.cats.forEach(cat=>{
-    const zona=document.createElement('div'); zona.className='categoria-zona'; zona.dataset.cat=cat;
-    zona.innerHTML='<div class="categoria-nombre">'+cat+'</div><div class="palabras-en-zona" id="zona-'+cat.replace(/ /g,'-')+'"></div>';
-    zona.onclick=()=>colocarEnCategoria(cat);
-    gcont.appendChild(zona);
-  });
-}
-function seleccionarPalabra(btn,palabra) {
-  if(catColocadas.includes(palabra)) return;
-  document.querySelectorAll('.palabra-tag').forEach(b=>b.classList.remove('seleccionada'));
-  btn.classList.add('seleccionada'); catSeleccionada=palabra;
-}
-function colocarEnCategoria(cat) {
-  if(!catSeleccionada) return;
-  const r=catPartida[catIdx];
-  const correcta=r.palabras.find(p=>p.w===catSeleccionada).c;
-  const ok=correcta===cat;
-  catColocadas.push(catSeleccionada); catTotal++;
-  if(ok) catAciertos++;
-  const zona=document.getElementById('zona-'+cat.replace(/ /g,'-'));
-  const span=document.createElement('span'); span.className='palabra-colocada';
-  span.textContent=catSeleccionada; span.style.background=ok?'#C8E6C9':'#FFCDD2';
-  zona.appendChild(span);
-  document.querySelectorAll('.palabra-tag').forEach(b=>{if(b.dataset.palabra===catSeleccionada){b.style.opacity='0.3';b.classList.remove('seleccionada');}});
-  catSeleccionada=null;
-  document.getElementById('info-categorias').textContent='Ronda '+(catIdx+1)+' de '+TOTAL_CAT+' — Aciertos: '+catAciertos+'/'+catTotal;
-  if(catColocadas.length===r.palabras.length) {
-    const bien=r.palabras.every(p=>catColocadas.includes(p.w));
-    document.getElementById('msg-categorias').textContent=catColocadas.filter((_,i)=>{const colocada=catColocadas[i];const corrPalabra=r.palabras.find(p=>p.w===colocada);return corrPalabra;}).length===r.palabras.length?'✅ ¡Ronda completada!':'👏 Ronda completada';
-    setTimeout(()=>document.getElementById('btn-sig-categorias').style.display='block',600);
-  }
-}
-function siguienteCategorias() {
-  catIdx++;
-  if(catIdx>=TOTAL_CAT){pantallaFin('fin-categorias',['palabras-categoria','categorias-grid'],'btn-sig-categorias',catAciertos,catTotal,['🏆 ¡Sin fallar una!','🎉 ¡Muy bien clasificado!','👏 ¡Buen intento!','💪 ¡A seguir practicando!']);return;}
-  mostrarRondaCat();
-}
+const TOTAL_CAT=8; let catP=[],catIdx=0,catAc=0,catTot=0,catSel=null,catCol=[];
+function iniciarCategorias(){catP=[...rondasCat].sort(()=>Math.random()-0.5).slice(0,TOTAL_CAT);catIdx=0;catAc=0;catTot=0;document.getElementById('fin-categorias').style.display='none';document.getElementById('btn-sig-categorias').style.display='none';mostrarRondaCat();}
+function mostrarRondaCat(){catSel=null;catCol=[];document.getElementById('msg-categorias').textContent='';document.getElementById('btn-sig-categorias').style.display='none';const r=catP[catIdx];document.getElementById('info-categorias').textContent='Ronda '+(catIdx+1)+' de '+TOTAL_CAT+' — Aciertos: '+catAc+'/'+catTot;const pc=document.getElementById('palabras-categoria');pc.innerHTML='';[...r.palabras].sort(()=>Math.random()-0.5).forEach(({w})=>{const b=document.createElement('button');b.className='palabra-tag';b.textContent=w;b.dataset.p=w;b.onclick=()=>selCat(b,w);pc.appendChild(b);});const gc=document.getElementById('categorias-grid');gc.innerHTML='';r.cats.forEach(cat=>{const z=document.createElement('div');z.className='categoria-zona';z.dataset.cat=cat;z.innerHTML='<div class="categoria-nombre">'+cat+'</div><div class="palabras-en-zona" id="zona-'+cat.replace(/ /g,'_')+'"></div>';z.onclick=()=>colocarCat(cat);gc.appendChild(z);});}
+function selCat(btn,p){if(catCol.includes(p))return;document.querySelectorAll('.palabra-tag').forEach(b=>b.classList.remove('seleccionada'));btn.classList.add('seleccionada');catSel=p;}
+function colocarCat(cat){if(!catSel)return;const r=catP[catIdx];const correcta=r.palabras.find(p=>p.w===catSel).c;const ok=correcta===cat;catCol.push(catSel);catTot++;if(ok)catAc++;const zona=document.getElementById('zona-'+cat.replace(/ /g,'_'));const sp=document.createElement('span');sp.className='palabra-colocada';sp.textContent=catSel;sp.style.background=ok?'#C8E6C9':'#FFCDD2';zona.appendChild(sp);document.querySelectorAll('.palabra-tag').forEach(b=>{if(b.dataset.p===catSel){b.style.opacity='0.3';b.classList.remove('seleccionada');}});catSel=null;document.getElementById('info-categorias').textContent='Ronda '+(catIdx+1)+' de '+TOTAL_CAT+' — Aciertos: '+catAc+'/'+catTot;if(catCol.length===r.palabras.length)setTimeout(()=>document.getElementById('btn-sig-categorias').style.display='block',500);}
+function siguienteCategorias(){catIdx++;if(catIdx>=TOTAL_CAT){pantallaFin('fin-categorias',['palabras-categoria','categorias-grid'],'btn-sig-categorias',catAc,catTot,['🏆 ¡Sin fallar una!','🎉 ¡Muy bien clasificado!','👏 ¡Buen intento!','💪 ¡A seguir practicando!'],'categorias');return;}mostrarRondaCat();}
+
+// ══ CÁLCULO MENTAL ══
+const TOTAL_CALC=12; let calcIdx=0,calcAc=0,calcResp=false,calcCorrecta=0;
+function generarOperacion(){const tipos=['suma','resta','multi'];const t=tipos[Math.floor(Math.random()*tipos.length)];let a,b,res,texto;if(t==='suma'){a=Math.floor(Math.random()*50)+10;b=Math.floor(Math.random()*50)+10;res=a+b;texto=a+' + '+b+' = ?';}else if(t==='resta'){a=Math.floor(Math.random()*50)+30;b=Math.floor(Math.random()*20)+5;res=a-b;texto=a+' − '+b+' = ?';}else{a=Math.floor(Math.random()*9)+2;b=Math.floor(Math.random()*9)+2;res=a*b;texto=a+' × '+b+' = ?';}return{texto,res};}
+function iniciarCalculo(){calcIdx=0;calcAc=0;document.getElementById('fin-calculo').style.display='none';document.getElementById('btn-sig-calculo').style.display='block';mostrarCalculo();}
+function mostrarCalculo(){calcResp=false;document.getElementById('msg-calculo').textContent='';document.getElementById('info-calculo').textContent='Operación '+(calcIdx+1)+' de '+TOTAL_CALC+' — Aciertos: '+calcAc;const{texto,res}=generarOperacion();calcCorrecta=res;document.getElementById('operacion-box').textContent=texto;const opts=new Set([res]);while(opts.size<3){const d=res+Math.floor(Math.random()*20)-10;if(d!==res&&d>0)opts.add(d);}const cont=document.getElementById('opciones-calculo');cont.innerHTML='';[...opts].sort(()=>Math.random()-0.5).forEach(op=>{const b=document.createElement('button');b.className='opcion-calc-btn';b.textContent=op;b.onclick=()=>respCalculo(b,op===calcCorrecta);cont.appendChild(b);});}
+function respCalculo(btn,ok){if(calcResp)return;calcResp=true;document.querySelectorAll('.opcion-calc-btn').forEach(b=>b.disabled=true);if(ok){btn.classList.add('correcto');calcAc++;document.getElementById('msg-calculo').textContent='✅ ¡Correcto!';}else{btn.classList.add('incorrecto');document.querySelectorAll('.opcion-calc-btn').forEach(b=>{if(parseInt(b.textContent)===calcCorrecta)b.classList.add('correcto');});document.getElementById('msg-calculo').textContent='❌ Era: '+calcCorrecta;}}
+function siguienteCalculo(){calcIdx++;if(calcIdx>=TOTAL_CALC){pantallaFin('fin-calculo',['operacion-box','opciones-calculo'],'btn-sig-calculo',calcAc,TOTAL_CALC,['🏆 ¡Calculadora humana!','🎉 ¡Muy bien!','👏 ¡Buen intento!','💪 ¡A seguir practicando!'],'calculo');return;}mostrarCalculo();}
+
+// ══ ¿DE QUÉ AÑO? ══
+const eventos=[
+  {e:'El hombre pisó la Luna por primera vez',a:1969,ops:[1959,1969,1979]},
+  {e:'Comenzó la Guerra Civil Española',a:1936,ops:[1926,1936,1946]},
+  {e:'España ganó el Mundial de Fútbol',a:2010,ops:[2006,2010,2014]},
+  {e:'Murió Francisco Franco',a:1975,ops:[1970,1975,1980]},
+  {e:'España entró en la Unión Europea',a:1986,ops:[1982,1986,1990]},
+  {e:'Cayó el Muro de Berlín',a:1989,ops:[1985,1989,1993]},
+  {e:'Columbus llegó a América',a:1492,ops:[1482,1492,1502]},
+  {e:'Se celebraron los Juegos Olímpicos de Barcelona',a:1992,ops:[1988,1992,1996]},
+  {e:'Comenzó la Segunda Guerra Mundial',a:1939,ops:[1935,1939,1943]},
+  {e:'Se inventó el teléfono (Alexander Graham Bell)',a:1876,ops:[1866,1876,1886]},
+  {e:'La Revolución Francesa',a:1789,ops:[1779,1789,1799]},
+  {e:'España ganó la Eurocopa por primera vez',a:1964,ops:[1960,1964,1968]},
+  {e:'Nació Pablo Picasso',a:1881,ops:[1871,1881,1891]},
+  {e:'Se publicó el Quijote de Cervantes',a:1605,ops:[1595,1605,1615]},
+  {e:'Primer vuelo de los hermanos Wright',a:1903,ops:[1898,1903,1908]},
+  {e:'España estrenó la Constitución actual',a:1978,ops:[1975,1978,1982]},
+  {e:'Nació Federico García Lorca',a:1898,ops:[1888,1898,1908]},
+  {e:'Se inauguró la Torre Eiffel',a:1889,ops:[1879,1889,1899]},
+  {e:'Atentado del 11-S en Nueva York',a:2001,ops:[1999,2001,2003]},
+  {e:'España ganó su segunda Eurocopa consecutiva',a:2012,ops:[2008,2012,2016]},
+];
+const TOTAL_ANYO=12; let anyoP=[],anyoIdx=0,anyoAc=0,anyoResp=false;
+function iniciarAnyo(){anyoP=[...eventos].sort(()=>Math.random()-0.5).slice(0,TOTAL_ANYO);anyoIdx=0;anyoAc=0;document.getElementById('fin-anyo').style.display='none';document.getElementById('btn-sig-anyo').style.display='block';mostrarAnyo();}
+function mostrarAnyo(){anyoResp=false;document.getElementById('msg-anyo').textContent='';document.getElementById('info-anyo').textContent='Pregunta '+(anyoIdx+1)+' de '+TOTAL_ANYO+' — Aciertos: '+anyoAc;const q=anyoP[anyoIdx];document.getElementById('evento-box').innerHTML='¿En qué año ocurrió?<br><strong style="color:#C97B2A;font-size:28px">'+q.e+'</strong>';const cont=document.getElementById('opciones-anyo');cont.innerHTML='';[...q.ops].sort(()=>Math.random()-0.5).forEach(op=>{const b=document.createElement('button');b.className='opcion-anyo-btn';b.textContent=op;b.onclick=()=>respAnyo(b,op===q.a,q.a);cont.appendChild(b);});}
+function respAnyo(btn,ok,correcta){if(anyoResp)return;anyoResp=true;document.querySelectorAll('.opcion-anyo-btn').forEach(b=>b.disabled=true);if(ok){btn.classList.add('correcto');anyoAc++;document.getElementById('msg-anyo').textContent='✅ ¡Exacto!';}else{btn.classList.add('incorrecto');document.querySelectorAll('.opcion-anyo-btn').forEach(b=>{if(parseInt(b.textContent)===correcta)b.classList.add('correcto');});document.getElementById('msg-anyo').textContent='❌ Era '+correcta;}}
+function siguienteAnyo(){anyoIdx++;if(anyoIdx>=TOTAL_ANYO){pantallaFin('fin-anyo',['evento-box','opciones-anyo'],'btn-sig-anyo',anyoAc,TOTAL_ANYO,['🏆 ¡Memoria histórica perfecta!','🎉 ¡Muy bien!','👏 ¡Buen intento!','💪 ¡A repasar la historia!'],'anyo');return;}mostrarAnyo();}
 </script>
 </body>
 </html>
