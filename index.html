@@ -62,9 +62,9 @@ body { font-family: Georgia, serif; background: #FFF8F0; min-height: 100vh; disp
 .pantalla-fin .fin-puntos { font-size: 22px; color: #8B6340; margin-bottom: 24px; }
 
 /* ── MEMORY ── */
-#tablero-memory { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; max-width: 660px; margin: 0 auto 20px; }
-.carta { aspect-ratio:1; border-radius:14px; border:3px solid #E8D5B7; font-size:46px; display:flex; align-items:center; justify-content:center; cursor:pointer; background:#FFF3E0; transition:transform 0.2s; user-select:none; }
-.carta:hover { transform:scale(1.05); }
+#tablero-memory { display: grid; grid-template-columns: repeat(6,1fr); gap: 7px; max-width: 720px; margin: 0 auto 12px; }
+.carta { aspect-ratio:1; border-radius:10px; border:2px solid #E8D5B7; font-size:30px; display:flex; align-items:center; justify-content:center; cursor:pointer; background:#FFF3E0; transition:transform 0.2s; user-select:none; }
+.carta:hover { transform:scale(1.04); }
 .carta.volteada,.carta.encontrada { background:white; border-color:#C97B2A; }
 .carta.oculta span { display:none; }
 .carta.encontrada { border-color:#4CAF50; background:#E8F5E9; }
@@ -413,7 +413,7 @@ function pantallaFin(idFin, ocultarIds, idBtn, aciertos, total, msgs, juegoKey) 
 }
 
 // ══ MEMORY ══
-const pares=['🌸','🌻','🍎','🐶','🏠','🚂','🦋','🌙'];
+const pares=['🌸','🌻','🍎','🐶','🏠','🚂','🦋','🌙','🍓','🐱','⭐','🌈','🎵','🍀','🎈'];
 let cartasVolteadas=[],cartasBloqueadas=false,encontradas=0;
 function iniciarMemory() {
   document.getElementById('msg-memory').textContent='Encuentra las parejas 👇';
