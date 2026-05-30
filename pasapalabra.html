@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pasapalabra — Federico y Begoña</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:Georgia,serif; background:#FFF8F0; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:16px; }
+
+/* ── BIENVENIDA ── */
+#pantalla-bienvenida { width:100%; max-width:900px; }
+.bienvenida-titulo { text-align:center; font-size:36px; color:#5C3D1E; margin:20px 0 8px; }
+.bienvenida-sub { text-align:center; font-size:18px; color:#8B6340; margin-bottom:30px; }
+.jugadores-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; max-width:500px; margin:0 auto 28px; }
+.jugador-btn { background:white; border:3px solid #E8D5B7; border-radius:20px; padding:32px 16px; text-align:center; cursor:pointer; transition:transform 0.15s,border-color 0.15s; }
+.jugador-btn:hover { transform:scale(1.04); border-color:#C97B2A; }
+.jugador-icono { font-size:60px; display:block; margin-bottom:12px; }
+.jugador-nombre { font-size:26px; color:#5C3D1E; font-weight:bold; }
+.btn-ranking-bienvenida { display:block; margin:0 auto 10px; font-size:17px; background:transparent; border:2px solid #C97B2A; color:#C97B2A; border-radius:12px; padding:10px 24px; cursor:pointer; font-family:Georgia,serif; }
+.btn-ranking-bienvenida:hover { background:#C97B2A; color:white; }
+.btn-volver-inicio { display:block; margin:10px auto 0; font-size:15px; background:transparent; border:2px solid #8B6340; color:#8B6340; border-radius:10px; padding:8px 20px; cursor:pointer; font-family:Georgia,serif; }
+.btn-volver-inicio:hover { background:#8B6340; color:white; }
+
+/* ── SELECCIÓN DE ROSCOS ── */
+#pantalla-roscos { display:none; width:100%; max-width:900px; }
+.saludo-roscos { text-align:center; font-size:26px; color:#5C3D1E; margin:10px 0 4px; }
+.sub-roscos { text-align:center; font-size:16px; color:#8B6340; margin-bottom:20px; }
+.roscos-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:20px; }
+.rosco-card { background:white; border:3px solid #E8D5B7; border-radius:16px; padding:18px 10px; text-align:center; cursor:pointer; transition:transform 0.15s,border-color 0.15s; position:relative; }
+.rosco-card.desbloqueado:hover { transform:scale(1.04); border-color:#C97B2A; }
+.rosco-card.bloqueado { opacity:0.45; cursor:not-allowed; }
+.rosco-card.completado { border-color:#4CAF50; background:#F1FBF3; }
+.rosco-num { font-size:32px; font-weight:bold; color:#5C3D1E; }
+.rosco-dif { font-size:13px; color:#8B6340; margin:4px 0; }
+.rosco-estrellas { font-size:16px; }
+.rosco-mejor { font-size:12px; color:#4CAF50; margin-top:4px; font-weight:bold; }
+.candado { font-size:28px; }
+
+/* ── JUEGO ── */
+#pantalla-juego { display:none; width:100%; max-width:900px; }
+.cabecera-juego { display:flex; align-items:center; gap:12px; margin-bottom:16px; padding-bottom:14px; border-bottom:2px solid #E8D5B7; }
+.btn-volver { font-size:17px; background:#FFF8F0; border:2px solid #C97B2A; color:#C97B2A; border-radius:10px; padding:8px 14px; cursor:pointer; font-family:Georgia,serif; }
+.btn-volver:hover { background:#C97B2A; color:white; }
+.titulo-juego { font-size:24px; color:#5C3D1E; }
+.jugador-badge { font-size:15px; color:#8B6340; margin-left:auto; }
+.info-pp { text-align:center; font-size:17px; color:#8B6340; margin-bottom:10px; }
+.juego-layout { display:grid; grid-template-columns:auto 1fr; gap:20px; align-items:start; }
+.columna-rosco { display:flex; flex-direction:column; align-items:center; }
+.columna-controles { display:flex; flex-direction:column; }
+#pregunta-pp { background:white; border:3px solid #E8D5B7; border-radius:14px; padding:16px 20px; font-size:20px; color:#5C3D1E; text-align:center; min-height:72px; line-height:1.5; margin-bottom:12px; }
+#respuesta-actual { font-size:24px; color:#C97B2A; text-align:center; min-height:34px; margin-bottom:10px; letter-spacing:3px; font-weight:bold; }
+.msg-pp { text-align:center; font-size:20px; color:#5C3D1E; min-height:30px; margin-bottom:10px; }
+.teclado-fila { display:flex; gap:5px; justify-content:center; margin-bottom:5px; }
+.tecla { font-size:17px; font-weight:bold; background:white; border:2px solid #C97B2A; border-radius:8px; width:42px; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#5C3D1E; font-family:Georgia,serif; }
+.tecla:hover { background:#FFE0B2; }
+.tecla:disabled { background:#E8D5B7; border-color:#E8D5B7; color:#B0A090; cursor:default; }
+.botones-pp { display:flex; gap:10px; justify-content:center; margin-top:10px; flex-wrap:wrap; }
+.btn-pp { font-size:17px; border:none; border-radius:12px; padding:12px 22px; cursor:pointer; font-family:Georgia,serif; color:white; }
+.btn-confirmar { background:#2E7D32; font-size:19px; padding:14px 28px; border-radius:14px; letter-spacing:0.5px; }
+.btn-confirmar:hover { background:#1B5E20; }
+.btn-borrar-pp { background:#5C3D1E; font-size:17px; padding:12px 20px; border-radius:10px; }
+.btn-borrar-pp:hover { background:#3E2A14; }
+.btn-pasa { background:#E65100; font-size:19px; padding:14px 28px; border-radius:14px; letter-spacing:0.5px; }
+.btn-pasa:hover { background:#BF360C; }
+.btn-rindo { background:#6A1B9A; font-size:17px; padding:12px 22px; border-radius:12px; display:none; }
+.btn-rindo:hover { background:#4A148C; }
+
+/* ── RANKING ── */
+#pantalla-ranking { display:none; width:100%; max-width:860px; }
+.ranking-titulo { text-align:center; font-size:28px; color:#5C3D1E; margin-bottom:20px; }
+.ranking-tabla { width:100%; border-collapse:collapse; font-size:16px; }
+.ranking-tabla th { background:#C97B2A; color:white; padding:12px; text-align:center; }
+.ranking-tabla td { padding:10px 14px; border-bottom:1px solid #E8D5B7; text-align:center; color:#5C3D1E; }
+.ranking-tabla tr:nth-child(even) td { background:#FFF3E0; }
+.btn-reset { display:block; margin:20px auto 0; font-size:16px; background:transparent; border:2px solid #E57373; color:#E57373; border-radius:10px; padding:10px 24px; cursor:pointer; font-family:Georgia,serif; }
+.btn-reset:hover { background:#FFCDD2; }
+
+/* ── FIN ROSCO ── */
+#pantalla-fin { display:none; width:100%; max-width:700px; text-align:center; padding:20px; }
+.fin-emoji { font-size:64px; margin-bottom:14px; }
+.fin-titulo { font-size:28px; color:#5C3D1E; margin-bottom:10px; }
+.fin-puntos { font-size:22px; color:#8B6340; margin-bottom:10px; }
+.fin-desbloqueo { font-size:18px; color:#4CAF50; margin-bottom:24px; font-weight:bold; }
+.btn-fin { display:inline-block; margin:6px; font-size:18px; background:#C97B2A; color:white; border:none; border-radius:12px; padding:12px 28px; cursor:pointer; font-family:Georgia,serif; }
+.btn-fin:hover { background:#A0621E; }
+.btn-fin-sec { background:#8B6340; }
+.btn-fin-sec:hover { background:#5C3D1E; }
+
+footer { text-align:center; padding:24px 0 8px; font-size:15px; color:#8B6340; font-family:Georgia,serif; margin-top:16px; }
+</style>
+</head>
+<body>
+
+<!-- BIENVENIDA -->
+<div id="pantalla-bienvenida">
+  <div class="bienvenida-titulo">🎡 Pasapalabra</div>
+  <div class="bienvenida-sub">¿Quién juega hoy?</div>
+  <div class="jugadores-grid">
+    <div class="jugador-btn" onclick="elegirJugador('Federico','🌟')">
+      <span class="jugador-icono">🌟</span>
+      <div class="jugador-nombre">Federico</div>
+    </div>
+    <div class="jugador-btn" onclick="elegirJugador('Begoña','🌸')">
+      <span class="jugador-icono">🌸</span>
+      <div class="jugador-nombre">Begoña</div>
+    </div>
+  </div>
+  <button class="btn-ranking-bienvenida" onclick="mostrarRanking()">🏆 Ver ranking</button>
+  <button class="btn-volver-inicio" onclick="window.location.href='index.html'">← Volver a los juegos</button>
+</div>
+
+<!-- SELECCIÓN ROSCOS -->
+<div id="pantalla-roscos">
+  <div class="saludo-roscos" id="saludo-roscos"></div>
+  <div class="sub-roscos">Supera cada rosco para desbloquear el siguiente (mínimo 20 aciertos)</div>
+  <div class="roscos-grid" id="roscos-grid"></div>
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:10px">
+    <button class="btn-ranking-bienvenida" onclick="mostrarRanking()">🏆 Ver ranking</button>
+    <button class="btn-volver-inicio" onclick="volverBienvenida()">🔄 Cambiar jugador</button>
+    <button class="btn-volver-inicio" onclick="window.location.href='index.html'">← Juegos</button>
+  </div>
+</div>
+
+<!-- JUEGO -->
+<div id="pantalla-juego">
+  <div class="cabecera-juego">
+    <button class="btn-volver" onclick="volverRoscos()">← Roscos</button>
+    <span class="titulo-juego" id="titulo-juego">🎡 Pasapalabra</span>
+    <span class="jugador-badge" id="badge-juego"></span>
+  </div>
+  <div class="info-pp" id="info-pp"></div>
+  <div class="juego-layout">
+    <div class="columna-rosco">
+      <canvas id="rosco-canvas" width="300" height="300"></canvas>
+    </div>
+    <div class="columna-controles">
+      <div id="pregunta-pp"></div>
+      <div id="respuesta-actual"></div>
+      <div class="msg-pp" id="msg-pp"></div>
+      <div id="teclado-pp"></div>
+      <div class="botones-pp">
+        <button class="btn-pp btn-borrar-pp" onclick="borrarLetra()">⬅ Borrar</button>
+        <button class="btn-pp btn-confirmar" onclick="confirmar()">✅ Confirmar</button>
+        <button class="btn-pp btn-pasa" onclick="pasar()">⏭ Pasapalabra</button>
+        <button class="btn-pp btn-rindo" id="btn-rindo" onclick="meRindo()">🏳️ Me rindo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FIN ROSCO -->
+<div id="pantalla-fin">
+  <div class="fin-emoji" id="fin-emoji"></div>
+  <div class="fin-titulo" id="fin-titulo"></div>
+  <div class="fin-puntos" id="fin-puntos"></div>
+  <div class="fin-desbloqueo" id="fin-desbloqueo"></div>
+  <button class="btn-fin" id="btn-repetir" onclick="repetirRosco()">🔄 Repetir rosco</button>
+  <button class="btn-fin btn-fin-sec" onclick="volverRoscos()">📋 Elegir rosco</button>
+  <button class="btn-fin btn-fin-sec" onclick="mostrarRanking()">🏆 Ranking</button>
+</div>
+
+<!-- RANKING -->
+<div id="pantalla-ranking">
+  <div class="cabecera-juego">
+    <button class="btn-volver" onclick="volverRoscos()">← Volver</button>
+    <span class="titulo-juego">🏆 Ranking Pasapalabra</span>
+  </div>
+  <div id="tabla-ranking"></div>
+  <button class="btn-reset" onclick="resetRanking()">🗑️ Borrar ranking</button>
+</div>
+
+<footer>Hecho con todo mi cariño para vosotros 💛<br><span style="font-size:13px">Diseñado por Bego</span></footer>
+
+<script>
+// ══ DATOS ══
+let jugador = {nombre:'', icono:''};
+let roscoActual = 0;
+let ppEstado = {}, ppOrden = [], ppIdx = 0, ppAcertadas = 0, ppFalladas = 0, ppRespuesta = [];
+let primeraVueltaCompleta = false;
+let preguntasRespondidas = 0;
+const LETRAS = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('');
+const MIN_DESBLOQUEO = 20;
+
+const ROSCOS = [
+  // ── ROSCO 1 — Geografía España fácil ──
+  { titulo:'Rosco 1 — España', dif:'🟢 Fácil', estrellas:'⭐', preguntas:{
+    A:{p:'Empieza por A — Comunidad autónoma española cuya capital es Oviedo',r:'ASTURIAS',alt:['asturias']},
+    B:{p:'Empieza por B — Ciudad española famosa por la Sagrada Familia',r:'BARCELONA',alt:['barcelona']},
+    C:{p:'Empieza por C — Ciudad española famosa por su Mezquita-Catedral',r:'CORDOBA',alt:['córdoba','cordoba']},
+    D:{p:'Empieza por D — Río español que nace en Soria y desemboca en Oporto',r:'DUERO',alt:['duero']},
+    E:{p:'Empieza por E — Comunidad autónoma española que comprende Cáceres y Badajoz',r:'EXTREMADURA',alt:['extremadura']},
+    F:{p:'Empieza por F — Ciudad española en Cataluña, la segunda más poblada de la provincia de Girona',r:'FIGUERES',alt:['figueres','figueras']},
+    G:{p:'Empieza por G — Ciudad andaluza famosa por la Alhambra',r:'GRANADA',alt:['granada']},
+    H:{p:'Empieza por H — Provincia andaluza que limita con Portugal, famosa por el jamón ibérico',r:'HUELVA',alt:['huelva']},
+    I:{p:'Empieza por I — Isla española del Mediterráneo famosa por su vida nocturna',r:'IBIZA',alt:['ibiza']},
+    J:{p:'Empieza por J — Provincia andaluza famosa por el aceite de oliva y sus castillos',r:'JAEN',alt:['jaén','jaen']},
+    K:{p:'Contiene la K — Nombre en euskera del País Vasco',r:'EUSKADI',alt:['euskadi']},
+    L:{p:'Empieza por L — Capital de la Rioja, famosa por su vino',r:'LOGROÑO',alt:['logroño','logrono']},
+    M:{p:'Empieza por M — Capital de España',r:'MADRID',alt:['madrid']},
+    N:{p:'Empieza por N — Comunidad foral del norte de España, famosa por los Sanfermines',r:'NAVARRA',alt:['navarra']},
+    Ñ:{p:'Contiene la Ñ — Gentilicio de los habitantes de Cataluña',r:'CATALAN',alt:['catalán','catalan']},
+    O:{p:'Empieza por O — Capital del Principado de Asturias',r:'OVIEDO',alt:['oviedo']},
+    P:{p:'Empieza por P — Ciudad española famosa por los Sanfermines',r:'PAMPLONA',alt:['pamplona']},
+    Q:{p:'Empieza por Q — Región española también llamada La Mancha, tierra del Quijote',r:'QUIJOTE',alt:['la mancha','quijote']},
+    R:{p:'Empieza por R — Ciudad española en la que nació Trajano, el emperador romano',r:'ITALICA',alt:['itálica','italica']},
+    S:{p:'Empieza por S — Ciudad española con la catedral gótica más grande del mundo',r:'SEVILLA',alt:['sevilla']},
+    T:{p:'Empieza por T — Río que pasa por Toledo y desemboca en Lisboa',r:'TAJO',alt:['tajo']},
+    U:{p:'Empieza por U — Ciudad española famosa por su universidad, la más antigua de España',r:'SALAMANCA',alt:['salamanca']},
+    V:{p:'Empieza por V — Ciudad española famosa por la paella y la Ciudad de las Artes',r:'VALENCIA',alt:['valencia']},
+    W:{p:'Contiene la W — Nombre completo del rey actual de España',r:'FELIPE',alt:['felipe','felipe vi','felipe sexto']},
+    X:{p:'Empieza por X — Ciudad gallega con la catedral más famosa del Camino de Santiago',r:'SANTIAGO',alt:['santiago','santiago de compostela']},
+    Y:{p:'Contiene la Y — Ciudad del País Vasco famosa por el Museo Guggenheim',r:'BILBAO',alt:['bilbao']},
+    Z:{p:'Empieza por Z — Ciudad aragonesa con la Basílica del Pilar',r:'ZARAGOZA',alt:['zaragoza']},
+  }},
+
+  // ── ROSCO 2 — Deportistas españoles ──
+  { titulo:'Rosco 2 — Deportistas', dif:'🟢 Fácil', estrellas:'⭐', preguntas:{
+    A:{p:'Empieza por A — Piloto español de Fórmula 1, doble campeón del mundo',r:'ALONSO',alt:['alonso','fernando alonso']},
+    B:{p:'Empieza por B — Golfista español ganador de varios majors, apodado Seve',r:'BALLESTEROS',alt:['ballesteros','seve ballesteros']},
+    C:{p:'Empieza por C — Portero español considerado el mejor del mundo en los 2000',r:'CASILLAS',alt:['casillas','iker casillas']},
+    D:{p:'Empieza por D — Deporte en el que Pau Gasol ganó medalla olímpica con España',r:'BALONCESTO',alt:['baloncesto']},
+    E:{p:'Empieza por E — Deporte donde España ganó el oro en Barcelona 92 con el Dream Team',r:'EQUITACION',alt:['equitación','equitacion']},
+    F:{p:'Empieza por F — Deporte en el que Arantxa Sánchez Vicario fue número uno mundial',r:'TENIS',alt:['tenis']},
+    G:{p:'Empieza por G — Jugador de baloncesto español del Real Madrid en los años 80',r:'GOMEZ',alt:['gómez','gomez','juan antonio gomez']},
+    H:{p:'Empieza por H — Deporte en que los Dorados de España ganaron el oro en Barcelona 92',r:'HOCKEY',alt:['hockey','hockey hierba']},
+    I:{p:'Empieza por I — Apellido del ciclista navarro cinco veces ganador del Tour de Francia',r:'INDURAIN',alt:['indurain','miguel indurain']},
+    J:{p:'Empieza por J — Apellido del marchador español campeón olímpico en los años 90',r:'GARCIA',alt:['garcía','garcia','daniel garcia']},
+    K:{p:'Contiene la K — Karateca española múltiple campeona del mundo',r:'SANDRA SANCHEZ',alt:['sandra','sanchez','sandra sanchez']},
+    L:{p:'Empieza por L — Apellido de la tenista española ganadora de Roland Garros en dobles',r:'LLAGOSTERA',alt:['llagostera','nuria llagostera']},
+    M:{p:'Empieza por M — Tenista mallorquín ganador de más de 20 Grand Slams',r:'NADAL',alt:['nadal','rafa nadal','rafael nadal']},
+    N:{p:'Empieza por N — Deporte acuático en que Mireia Belmonte ganó medallas olímpicas',r:'NATACION',alt:['natación','natacion']},
+    Ñ:{p:'Contiene la Ñ — Apellido del seleccionador que llevó a España al Mundial 2010',r:'DEL BOSQUE',alt:['del bosque','vicente del bosque']},
+    O:{p:'Empieza por O — Ciudad española donde se celebraron los JJOO de verano en 1992',r:'OLIMPICOS',alt:['olimpicos','barcelona','juegos olimpicos']},
+    P:{p:'Empieza por P — Deporte de raqueta con pared en el que España domina el mundo',r:'PADEL',alt:['pádel','padel']},
+    Q:{p:'Contiene la Q — Apodo popular del portero Iker Casillas',r:'SAN IKER',alt:['san iker']},
+    R:{p:'Empieza por R — Apellido del tenista español ganador del primer Roland Garros en 1994',r:'BRUGUERA',alt:['bruguera','sergi bruguera']},
+    S:{p:'Empieza por S — Apellido del futbolista español Balón de Oro en 2010',r:'XAVI',alt:['xavi','xavi hernandez']},
+    T:{p:'Empieza por T — Deporte en que Fermín Cacho ganó el oro en los JJOO de Barcelona',r:'ATLETISMO',alt:['atletismo']},
+    U:{p:'Contiene la U — Apellido del atleta español ganador del oro en 1500m en Barcelona 92',r:'CACHO',alt:['cacho','fermin cacho']},
+    V:{p:'Empieza por V — Apellido del piloto de motos español campeón del mundo en los 90',r:'CRIVILLE',alt:['crivillé','criville','alex criville']},
+    W:{p:'Contiene la W — Jugador de baloncesto americano apodado "La Bestia" que jugó en España',r:'NOWITZKI',alt:['nowitzki','dirk nowitzki']},
+    X:{p:'Empieza por X — Nombre del futbolista catalán centrocampista del Barça y la selección',r:'XAVI',alt:['xavi','xavi hernandez']},
+    Y:{p:'Contiene la Y — Deporte de combate japonés en que España ganó medalla olímpica',r:'JUDO',alt:['judo']},
+    Z:{p:'Empieza por Z — Apellido del jugador del Real Madrid considerado el mejor del mundo en 2002',r:'ZIDANE',alt:['zidane','zinedine zidane']},
+  }},
+
+  // ── ROSCO 3 — Cultura popular España ──
+  { titulo:'Rosco 3 — Cultura popular', dif:'🟢 Fácil', estrellas:'⭐', preguntas:{
+    A:{p:'Empieza por A — Director de cine español ganador del Oscar, autor de Todo sobre mi madre',r:'ALMODOVAR',alt:['almodóvar','almodovar','pedro almodóvar']},
+    B:{p:'Empieza por B — Bebida española de vino tinto con frutas muy popular en verano',r:'SANGRIA',alt:['sangría','sangria']},
+    C:{p:'Empieza por C — Plato madrileño típico con garbanzos, carne y verduras',r:'COCIDO',alt:['cocido','cocido madrileño']},
+    D:{p:'Empieza por D — Nombre del personaje principal de la novela de Cervantes',r:'DON QUIJOTE',alt:['don quijote','quijote']},
+    E:{p:'Empieza por E — Edificio renacentista mandado construir por Felipe II en Madrid',r:'EL ESCORIAL',alt:['el escorial','escorial']},
+    F:{p:'Empieza por F — Baile y música tradicional andaluza declarado Patrimonio de la Humanidad',r:'FLAMENCO',alt:['flamenco']},
+    G:{p:'Empieza por G — Artista español surrealista famoso por los relojes blandos',r:'GALA',alt:['dalí','dali','gala']},
+    H:{p:'Empieza por H — Personaje de ficción español del Siglo de Oro que lucha contra molinos',r:'HIDALGO',alt:['hidalgo','don quijote','quijote']},
+    I:{p:'Empieza por I — Institución española fundada en el siglo XV para perseguir la herejía',r:'INQUISICION',alt:['inquisición','inquisicion']},
+    J:{p:'Empieza por J — Embutido español curado más famoso en el mundo',r:'JAMON',alt:['jamón','jamon']},
+    K:{p:'Contiene la K — Marca de coches española más conocida',r:'SEAT',alt:['seat']},
+    L:{p:'Empieza por L — Poeta granadino del siglo XX autor del Romancero Gitano',r:'LORCA',alt:['lorca','garcia lorca','federico garcia lorca']},
+    M:{p:'Empieza por M — Pintura más famosa de Velázquez, que representa a la infanta Margarita',r:'MENINAS',alt:['meninas','las meninas']},
+    N:{p:'Empieza por N — Pintor español del siglo XVIII famoso por sus pinturas negras',r:'GOYA',alt:['goya','francisco de goya']},
+    Ñ:{p:'Contiene la Ñ — Año en que se aprobó la Constitución española actual',r:'SETENTA',alt:['setenta','1978','mil novecientos setenta y ocho']},
+    O:{p:'Empieza por O — Premio literario más importante en lengua castellana',r:'CERVANTES',alt:['cervantes','premio cervantes']},
+    P:{p:'Empieza por P — Plato español con arroz, pollo y mariscos típico de Valencia',r:'PAELLA',alt:['paella']},
+    Q:{p:'Empieza por Q — Queso español con denominación de origen de La Mancha',r:'QUESO MANCHEGO',alt:['manchego','queso manchego']},
+    R:{p:'Empieza por R — Cantaor flamenco más famoso del siglo XX, nacido en La Isla',r:'CAMARON',alt:['camarón','camaron']},
+    S:{p:'Empieza por S — Ciudad española famosa por su Semana Santa y su Feria de Abril',r:'SEVILLA',alt:['sevilla']},
+    T:{p:'Empieza por T — Plato español hecho con huevos y patatas',r:'TORTILLA',alt:['tortilla','tortilla de patata','tortilla española']},
+    U:{p:'Contiene la U — Apellido del cantante español más internacional de los años 70',r:'JULIO IGLESIAS',alt:['iglesias','julio iglesias']},
+    V:{p:'Empieza por V — Pintor español del siglo XVII, el más importante del Siglo de Oro',r:'VELAZQUEZ',alt:['velázquez','velazquez','diego velázquez']},
+    W:{p:'Contiene la W — Marca de comida rápida americana con más locales en España',r:'MCDONALDS',alt:['mcdonalds','mcdonald']},
+    X:{p:'Contiene la X — Nombre del torero más famoso del siglo XXI, apodado el de la Puebla',r:'MORANTE',alt:['morante','morante de la puebla']},
+    Y:{p:'Contiene la Y — Nombre del rey que reinó en España tras la muerte de Franco',r:'JUAN CARLOS',alt:['juan carlos','juan carlos i']},
+    Z:{p:'Empieza por Z — Ciudad española donde está la Basílica del Pilar y el museo Goya',r:'ZARAGOZA',alt:['zaragoza']},
+  }},
+
+  // ── ROSCO 4 — Geografía Europa ──
+  { titulo:'Rosco 4 — Europa', dif:'🟡 Medio', estrellas:'⭐⭐', preguntas:{
+    A:{p:'Empieza por A — Capital de Austria',r:'VIENA',alt:['viena']},
+    B:{p:'Empieza por B — Capital de Alemania',r:'BERLIN',alt:['berlín','berlin']},
+    C:{p:'Empieza por C — País europeo cuya capital es Praga',r:'REPUBLICA CHECA',alt:['república checa','republica checa','chequia']},
+    D:{p:'Empieza por D — Río europeo que atraviesa 10 países y desemboca en el Mar Negro',r:'DANUBIO',alt:['danubio']},
+    E:{p:'Empieza por E — País escandinavo cuya capital es Tallin',r:'ESTONIA',alt:['estonia']},
+    F:{p:'Empieza por F — País europeo cuya capital es Helsinki',r:'FINLANDIA',alt:['finlandia']},
+    G:{p:'Empieza por G — Lago más grande de Europa central entre Suiza y Francia',r:'GINEBRA',alt:['ginebra','lago ginebra','lago de ginebra']},
+    H:{p:'Empieza por H — País europeo cuya capital es Budapest',r:'HUNGRIA',alt:['hungría','hungria']},
+    I:{p:'Empieza por I — País europeo con forma de bota',r:'ITALIA',alt:['italia']},
+    J:{p:'Contiene la J — País escandinavo cuya capital es Oslo',r:'NORUEGA',alt:['noruega']},
+    K:{p:'Empieza por K — Capital de Ucrania',r:'KIEV',alt:['kiev']},
+    L:{p:'Empieza por L — País europeo más pequeño junto a Mónaco, entre España y Francia',r:'ANDORRA',alt:['andorra']},
+    M:{p:'Empieza por M — Principado enclavado en la Costa Azul francesa',r:'MONACO',alt:['mónaco','monaco']},
+    N:{p:'Empieza por N — País escandinavo famoso por los fiordos',r:'NORUEGA',alt:['noruega']},
+    Ñ:{p:'Contiene la Ñ — Nombre del mar que separa Italia de los Balcanes',r:'ADRIATICO',alt:['adriático','adriatico']},
+    O:{p:'Empieza por O — Capital de Noruega',r:'OSLO',alt:['oslo']},
+    P:{p:'Empieza por P — País europeo cuya capital es Varsovia',r:'POLONIA',alt:['polonia']},
+    Q:{p:'Contiene la Q — País europeo famoso por los quesos y el chocolate',r:'SUIZA',alt:['suiza']},
+    R:{p:'Empieza por R — Capital de Italia',r:'ROMA',alt:['roma']},
+    S:{p:'Empieza por S — País europeo neutral famoso por los bancos y los relojes',r:'SUIZA',alt:['suiza']},
+    T:{p:'Empieza por T — Capital de Estonia',r:'TALLIN',alt:['tallin','tallín']},
+    U:{p:'Empieza por U — País europeo del este cuya capital es Kiev',r:'UCRANIA',alt:['ucrania']},
+    V:{p:'Empieza por V — Ciudad italiana famosa por sus canales y góndolas',r:'VENECIA',alt:['venecia']},
+    W:{p:'Empieza por W — Ciudad austriaca famosa por Mozart y Beethoven',r:'VIENA',alt:['viena']},
+    X:{p:'Contiene la X — País del Benelux cuya capital es Luxemburgo',r:'LUXEMBURGO',alt:['luxemburgo']},
+    Y:{p:'Contiene la Y — Antiguo país europeo que se dividió en varios estados en los 90',r:'YUGOSLAVIA',alt:['yugoslavia']},
+    Z:{p:'Empieza por Z — Capital de Croacia',r:'ZAGREB',alt:['zagreb']},
+  }},
+
+  // ── ROSCO 5 — Historia España ──
+  { titulo:'Rosco 5 — Historia', dif:'🟡 Medio', estrellas:'⭐⭐', preguntas:{
+    A:{p:'Empieza por A — Último rey árabe de Granada que entregó la ciudad a los Reyes Católicos',r:'BOABDIL',alt:['boabdil']},
+    B:{p:'Empieza por B — Batalla de 1808 donde los españoles derrotaron a Napoleón',r:'BAILEN',alt:['bailén','bailen']},
+    C:{p:'Empieza por C — Reina que junto a Fernando II inició la unidad de España',r:'ISABEL',alt:['isabel','isabel la católica']},
+    D:{p:'Empieza por D — Dictador español que gobernó desde 1939 hasta 1975',r:'FRANCO',alt:['franco','francisco franco']},
+    E:{p:'Empieza por E — Edificio mandado construir por Felipe II en El Escorial',r:'MONASTERIO',alt:['monasterio','monasterio del escorial','el escorial']},
+    F:{p:'Empieza por F — Rey español que fue padre de Felipe II',r:'CARLOS',alt:['carlos','carlos i','carlos v']},
+    G:{p:'Empieza por G — Guerra española entre 1936 y 1939',r:'GUERRA CIVIL',alt:['guerra civil','guerra civil española']},
+    H:{p:'Empieza por H — Puerto desde donde salió Colón en 1492',r:'PALOS',alt:['palos','palos de la frontera']},
+    I:{p:'Empieza por I — Tribunal creado por los Reyes Católicos para perseguir la herejía',r:'INQUISICION',alt:['inquisición','inquisicion']},
+    J:{p:'Empieza por J — Rey intruso impuesto por Napoleón en España',r:'JOSE',alt:['josé','jose','jose i','pepe botella']},
+    K:{p:'Contiene la K — País que atacó a España en 1898 provocando la pérdida de Cuba',r:'ESTADOS UNIDOS',alt:['estados unidos','eeuu']},
+    L:{p:'Empieza por L — Batalla naval de 1571 en que España derrotó al Imperio Otomano',r:'LEPANTO',alt:['lepanto']},
+    M:{p:'Empieza por M — Pintor español del siglo XVII que retrató a la familia real',r:'MURILLO',alt:['murillo','bartolomé murillo']},
+    N:{p:'Empieza por N — Emperador francés que invadió España en 1808',r:'NAPOLEON',alt:['napoleón','napoleon']},
+    Ñ:{p:'Contiene la Ñ — Año en que España recuperó la democracia con las primeras elecciones libres',r:'SETENTA',alt:['setenta','1977','mil novecientos setenta y siete']},
+    O:{p:'Empieza por O — Ciudad española donde se firmó la rendición árabe en 1492',r:'GRANADA',alt:['granada']},
+    P:{p:'Empieza por P — Tratado de 1659 entre España y Francia',r:'PIRINEOS',alt:['pirineos','tratado de los pirineos']},
+    Q:{p:'Contiene la Q — Documento que limitó el poder del rey en la Edad Media española',r:'MAGNA CARTA',alt:['magna carta']},
+    R:{p:'Empieza por R — Proceso de unificación de España bajo los Reyes Católicos',r:'RECONQUISTA',alt:['reconquista']},
+    S:{p:'Empieza por S — Rey visigodo que unificó España religiosa y políticamente en el siglo VI',r:'RECAREDO',alt:['recaredo']},
+    T:{p:'Empieza por T — Tratado de 1494 que repartió el mundo entre España y Portugal',r:'TORDESILLAS',alt:['tordesillas']},
+    U:{p:'Contiene la U — Nombre de la primera Constitución española aprobada en 1812',r:'PEPA',alt:['pepa','la pepa']},
+    V:{p:'Empieza por V — Militar español que descubrió el Pacífico en 1513',r:'VASCO NUNEZ',alt:['vasco núñez','vasco nunez','núñez de balboa','balboa']},
+    W:{p:'Contiene la W — Nombre del rey alemán que también reinó en España como Carlos I',r:'CARLOS',alt:['carlos','carlos i de españa']},
+    X:{p:'Contiene la X — Explorador español que conquistó México',r:'CORTES',alt:['cortés','cortes','hernán cortés']},
+    Y:{p:'Contiene la Y — Ciudad española donde se proclamó la II República en 1931',r:'MADRID',alt:['madrid']},
+    Z:{p:'Empieza por Z — Ciudad sitiada heroicamente durante la Guerra de la Independencia',r:'ZARAGOZA',alt:['zaragoza']},
+  }},
+
+  // ── ROSCO 6 — Cine y música ──
+  { titulo:'Rosco 6 — Cine y música', dif:'🟡 Medio', estrellas:'⭐⭐', preguntas:{
+    A:{p:'Empieza por A — Director de cine español ganador del Oscar, autor de Todo sobre mi madre',r:'ALMODOVAR',alt:['almodóvar','almodovar','pedro almodóvar']},
+    B:{p:'Empieza por B — Cantante español conocido como El Divo de Juliobriga',r:'BISBAL',alt:['bisbal','david bisbal']},
+    C:{p:'Empieza por C — Compositor alemán que escribió la Quinta Sinfonía aunque era sordo',r:'BEETHOVEN',alt:['beethoven']},
+    D:{p:'Empieza por D — Compositor italiano del siglo XIX autor de Rigoletto',r:'VERDI',alt:['verdi','giuseppe verdi']},
+    E:{p:'Empieza por E — Cantante española ganadora de Eurovisión en 1969',r:'MASSIEL',alt:['massiel']},
+    F:{p:'Empieza por F — Compositor polaco romántico famoso por sus nocturnos',r:'CHOPIN',alt:['chopin','frédéric chopin']},
+    G:{p:'Empieza por G — Director de cine español que rodó El espíritu de la colmena',r:'ERICE',alt:['erice','víctor erice']},
+    H:{p:'Empieza por H — Compositor alemán del Barroco que escribió El Mesías',r:'HAENDEL',alt:['haendel','händel','handel','george frideric handel']},
+    I:{p:'Empieza por I — Actor español ganador del Oscar por Todo sobre mi madre',r:'BANDERAS',alt:['banderas','antonio banderas']},
+    J:{p:'Empieza por J — Cantante malagueño más internacional de los años 70 y 80',r:'JULIO',alt:['julio','julio iglesias']},
+    K:{p:'Contiene la K — Director americano que rodó 2001 Odisea del Espacio',r:'KUBRICK',alt:['kubrick','stanley kubrick']},
+    L:{p:'Empieza por L — Compositor húngaro romántico famoso por sus rapsodias',r:'LISZT',alt:['liszt','franz liszt']},
+    M:{p:'Empieza por M — Compositor austriaco que escribió La Flauta Mágica',r:'MOZART',alt:['mozart','wolfgang amadeus mozart']},
+    N:{p:'Empieza por N — Actriz española ganadora del Oscar por Vicky Cristina Barcelona',r:'CRUZ',alt:['cruz','penélope cruz','penelope cruz']},
+    Ñ:{p:'Contiene la Ñ — Canción española ganadora de Eurovisión interpretada por Massiel',r:'LA LA LA',alt:['la la la']},
+    O:{p:'Empieza por O — Compositor español de principios del XX autor del Concierto de Aranjuez',r:'RODRIGO',alt:['rodrigo','joaquín rodrigo']},
+    P:{p:'Empieza por P — Director italiano del neorrealismo que rodó Ladrón de Bicicletas',r:'DE SICA',alt:['de sica','vittorio de sica']},
+    Q:{p:'Contiene la Q — Película española sobre la Guerra Civil rodada por Ken Loach',r:'TIERRA Y LIBERTAD',alt:['tierra y libertad']},
+    R:{p:'Empieza por R — Compositor francés del impresionismo musical que escribió el Bolero',r:'RAVEL',alt:['ravel','maurice ravel']},
+    S:{p:'Empieza por S — Compositor ruso del siglo XX autor de La consagración de la primavera',r:'STRAVINSKI',alt:['stravinski','stravinsky','igor stravinsky']},
+    T:{p:'Empieza por T — Cantante española de copla famosa por los años 50',r:'LOLA',alt:['lola','lola flores']},
+    U:{p:'Contiene la U — Director de cine español autor de Los otros con Nicole Kidman',r:'AMENABAR',alt:['amenábar','amenabar','alejandro amenábar']},
+    V:{p:'Empieza por V — Compositor italiano del Barroco que escribió Las cuatro estaciones',r:'VIVALDI',alt:['vivaldi','antonio vivaldi']},
+    W:{p:'Empieza por W — Compositor alemán romántico autor del Anillo del Nibelungo',r:'WAGNER',alt:['wagner','richard wagner']},
+    X:{p:'Contiene la X — Película española de terror de Alejandro Amenábar',r:'TESIS',alt:['tesis']},
+    Y:{p:'Contiene la Y — Músico americano de jazz considerado el mejor trompetista del siglo XX',r:'MILES DAVIS',alt:['miles davis','davis']},
+    Z:{p:'Empieza por Z — Compositor andaluz famoso por sus danzas españolas',r:'GRANADOS',alt:['granados','enrique granados']},
+  }},
+
+  // ── ROSCO 7 — Literatura y arte ──
+  { titulo:'Rosco 7 — Literatura y arte', dif:'🟠 Difícil', estrellas:'⭐⭐⭐', preguntas:{
+    A:{p:'Empieza por A — Género literario donde el autor narra su propia vida',r:'AUTOBIOGRAFIA',alt:['autobiografía','autobiografia']},
+    B:{p:'Empieza por B — Escritor ruso autor de Crimen y Castigo',r:'DOSTOIEVSKI',alt:['dostoievski','dostoyevski','fiódor dostoievski']},
+    C:{p:'Empieza por C — Movimiento artístico del siglo XX fundado por Picasso y Braque',r:'CUBISMO',alt:['cubismo']},
+    D:{p:'Empieza por D — Escritor danés autor de cuentos como La Sirenita',r:'ANDERSEN',alt:['andersen','hans christian andersen']},
+    E:{p:'Empieza por E — Recurso literario que consiste en describir algo omitiendo información relevante',r:'ELIPSIS',alt:['elipsis']},
+    F:{p:'Empieza por F — Figura retórica que consiste en dotar a objetos inanimados de cualidades humanas',r:'PERSONIFICACION',alt:['personificación','personificacion']},
+    G:{p:'Empieza por G — Poeta alemán autor del Fausto',r:'GOETHE',alt:['goethe','johann wolfgang von goethe']},
+    H:{p:'Empieza por H — Poeta griego autor de La Ilíada y La Odisea',r:'HOMERO',alt:['homero']},
+    I:{p:'Empieza por I — Movimiento pictórico francés del siglo XIX liderado por Monet',r:'IMPRESIONISMO',alt:['impresionismo']},
+    J:{p:'Empieza por J — Escritor irlandés autor del Ulises, considerado la mejor novela del siglo XX',r:'JOYCE',alt:['joyce','james joyce']},
+    K:{p:'Empieza por K — Escritor checo autor de El Proceso y La Metamorfosis',r:'KAFKA',alt:['kafka','franz kafka']},
+    L:{p:'Empieza por L — Tipo de poema de catorce versos dividido en dos cuartetos y dos tercetos',r:'SONETO',alt:['soneto']},
+    M:{p:'Empieza por M — Escritor colombiano premio Nobel autor de Cien años de soledad',r:'MARQUEZ',alt:['márquez','marquez','gabriel garcía márquez','garcía márquez']},
+    N:{p:'Empieza por N — Corriente literaria del siglo XIX que retrata la realidad social con objetividad',r:'NATURALISMO',alt:['naturalismo']},
+    Ñ:{p:'Contiene la Ñ — Obra de teatro de Lorca en que una madre sufre la muerte de sus hijos',r:'BERNARDA ALBA',alt:['bernarda alba','la casa de bernarda alba']},
+    O:{p:'Empieza por O — Poeta latino autor de Las Metamorfosis',r:'OVIDIO',alt:['ovidio']},
+    P:{p:'Empieza por P — Pintor español nacido en Málaga considerado el mayor artista del siglo XX',r:'PICASSO',alt:['picasso','pablo picasso']},
+    Q:{p:'Empieza por Q — Escritor español del Siglo de Oro famoso por sus sonetos y sátiras',r:'QUEVEDO',alt:['quevedo','francisco de quevedo']},
+    R:{p:'Empieza por R — Movimiento artístico y literario del siglo XIX que exaltaba los sentimientos',r:'ROMANTICISMO',alt:['romanticismo']},
+    S:{p:'Empieza por S — Dramaturgo inglés del siglo XVI considerado el mejor escritor de todos los tiempos',r:'SHAKESPEARE',alt:['shakespeare','william shakespeare']},
+    T:{p:'Empieza por T — Escritor ruso autor de Guerra y Paz',r:'TOLSTOI',alt:['tolstói','tolstoi','lev tolstói']},
+    U:{p:'Empieza por U — Corriente literaria latinoamericana de los años 60 y 70',r:'ULTRAISMO',alt:['ultraísmo','ultraismo']},
+    V:{p:'Empieza por V — Poeta francés simbolista autor de Arte Poética',r:'VERLAINE',alt:['verlaine','paul verlaine']},
+    W:{p:'Empieza por W — Poeta americano del siglo XIX autor de Hojas de hierba',r:'WHITMAN',alt:['whitman','walt whitman']},
+    X:{p:'Contiene la X — Figura retórica que une palabras de significado opuesto como silencio ensordecedor',r:'OXÍMORON',alt:['oxímoron','oximoron']},
+    Y:{p:'Contiene la Y — Poeta nicaragüense modernista autor de Azul',r:'DARIO',alt:['darío','dario','rubén darío']},
+    Z:{p:'Empieza por Z — Escritor francés naturalista autor de Germinal',r:'ZOLA',alt:['zola','émile zola']},
+  }},
+
+  // ── ROSCO 8 — Ciencia y filosofía ──
+  { titulo:'Rosco 8 — Ciencia y filosofía', dif:'🟠 Difícil', estrellas:'⭐⭐⭐', preguntas:{
+    A:{p:'Empieza por A — Filósofo griego discípulo de Platón que sistematizó la lógica',r:'ARISTOTELES',alt:['aristóteles','aristoteles']},
+    B:{p:'Empieza por B — Científico inglés que descubrió la penicilina',r:'FLEMING',alt:['fleming','alexander fleming']},
+    C:{p:'Empieza por C — Astrónomo polaco que defendió que la Tierra gira alrededor del Sol',r:'COPERNICO',alt:['copérnico','copernico','nicolás copérnico']},
+    D:{p:'Empieza por D — Naturalista inglés que formuló la teoría de la evolución',r:'DARWIN',alt:['darwin','charles darwin']},
+    E:{p:'Empieza por E — Físico alemán autor de la teoría de la relatividad',r:'EINSTEIN',alt:['einstein','albert einstein']},
+    F:{p:'Empieza por F — Científica polaca que ganó dos Premios Nobel, de Física y Química',r:'CURIE',alt:['curie','marie curie']},
+    G:{p:'Empieza por G — Astrónomo italiano que mejoró el telescopio y confirmó el heliocentrismo',r:'GALILEO',alt:['galileo','galileo galilei']},
+    H:{p:'Empieza por H — Filósofo alemán del siglo XIX que desarrolló la dialéctica',r:'HEGEL',alt:['hegel','georg hegel']},
+    I:{p:'Empieza por I — Físico inglés que descubrió la ley de la gravedad',r:'NEWTON',alt:['newton','isaac newton']},
+    J:{p:'Empieza por J — Filósofo alemán autor de la Crítica de la Razón Pura',r:'KANT',alt:['kant','immanuel kant']},
+    K:{p:'Empieza por K — Filósofo alemán que escribió la Crítica de la Razón Pura',r:'KANT',alt:['kant','immanuel kant']},
+    L:{p:'Empieza por L — Proceso por el que las plantas convierten la luz en energía',r:'LUZ',alt:['luz','fotosíntesis','fotosintesis']},
+    M:{p:'Empieza por M — Científico austriaco que descubrió las leyes de la herencia genética',r:'MENDEL',alt:['mendel','gregor mendel']},
+    N:{p:'Empieza por N — Partícula del átomo sin carga eléctrica',r:'NEUTRON',alt:['neutrón','neutron']},
+    Ñ:{p:'Contiene la Ñ — Disciplina que estudia los seres vivos',r:'BIOLOGIA',alt:['biología','biologia']},
+    O:{p:'Empieza por O — Corriente filosófica que estudia el ser en cuanto ser',r:'ONTOLOGIA',alt:['ontología','ontologia']},
+    P:{p:'Empieza por P — Filósofo griego discípulo de Sócrates',r:'PLATON',alt:['platón','platon']},
+    Q:{p:'Empieza por Q — Ciencia que estudia la composición y propiedades de la materia',r:'QUIMICA',alt:['química','quimica']},
+    R:{p:'Empieza por R — Filósofo francés del siglo XVII que dijo pienso luego existo',r:'DESCARTES',alt:['descartes','rené descartes']},
+    S:{p:'Empieza por S — Filósofo griego maestro de Platón condenado a beber cicuta',r:'SOCRATES',alt:['sócrates','socrates']},
+    T:{p:'Empieza por T — Tabla que clasifica todos los elementos químicos',r:'TABLA PERIODICA',alt:['tabla periódica','tabla periodica']},
+    U:{p:'Empieza por U — Teoría cosmológica que explica el origen del universo con una gran explosión',r:'UNIVERSO',alt:['universo','big bang']},
+    V:{p:'Empieza por V — Científico italiano que inventó la pila eléctrica',r:'VOLTA',alt:['volta','alessandro volta']},
+    W:{p:'Empieza por W — Físico alemán que formuló la teoría cuántica',r:'HEISENBERG',alt:['heisenberg','werner heisenberg']},
+    X:{p:'Contiene la X — Radiación electromagnética usada en medicina para ver los huesos',r:'RAYOS X',alt:['rayos x']},
+    Y:{p:'Contiene la Y — Unidad de medida de la energía en el Sistema Internacional',r:'JULIO',alt:['julio','joule']},
+    Z:{p:'Empieza por Z — Número entero negativo o positivo, incluyendo el cero',r:'ENTERO',alt:['entero','número entero']},
+  }},
+
+  // ── ROSCO 9 — Cultura universal ──
+  { titulo:'Rosco 9 — Cultura universal', dif:'🔴 Experto', estrellas:'⭐⭐⭐⭐', preguntas:{
+    A:{p:'Empieza por A — Figura retórica que consiste en la acumulación de palabras sin conjunciones',r:'ASINDETON',alt:['asíndeton','asindeton']},
+    B:{p:'Empieza por B — Corriente filosófica que defiende que la utilidad es el criterio moral',r:'BENTHAM',alt:['bentham','utilitarismo']},
+    C:{p:'Empieza por C — Recurso literario donde el final de una frase repite el inicio de la siguiente',r:'CONCATENACION',alt:['concatenación','concatenacion']},
+    D:{p:'Empieza por D — Método filosófico de Hegel basado en tesis, antítesis y síntesis',r:'DIALECTICA',alt:['dialéctica','dialectica']},
+    E:{p:'Empieza por E — Corriente filosófica que defiende la libertad y la responsabilidad individual',r:'EXISTENCIALISMO',alt:['existencialismo']},
+    F:{p:'Empieza por F — Figura retórica consistente en repetir una idea con distintas palabras',r:'PLEONASMO',alt:['pleonasmo']},
+    G:{p:'Empieza por G — Término filosófico que designa el conocimiento del bien y el mal',r:'GNOSEOLOGIA',alt:['gnoseología','gnoseologia']},
+    H:{p:'Empieza por H — Figura retórica que altera el orden sintáctico normal de la frase',r:'HIPERBATON',alt:['hipérbaton','hiperbaton']},
+    I:{p:'Empieza por I — Corriente filosófica que afirma que solo existe lo que percibimos',r:'IDEALISMO',alt:['idealismo']},
+    J:{p:'Empieza por J — Filósofo alemán del siglo XX autor de El ser y el tiempo',r:'HEIDEGGER',alt:['heidegger','martin heidegger']},
+    K:{p:'Empieza por K — Filósofo que distinguió entre el imperativo hipotético y el categórico',r:'KANT',alt:['kant','immanuel kant']},
+    L:{p:'Empieza por L — Figura retórica que suaviza una expresión desagradable',r:'LITOTES',alt:['lítotes','litotes']},
+    M:{p:'Empieza por M — Corriente filosófica que niega la existencia de entidades abstractas',r:'MATERIALISMO',alt:['materialismo']},
+    N:{p:'Empieza por N — Filósofo alemán que proclamó la muerte de Dios',r:'NIETZSCHE',alt:['nietzsche','friedrich nietzsche']},
+    Ñ:{p:'Contiene la Ñ — Concepto filosófico que designa la esencia de algo',r:'NOUMENON',alt:['nóumeno','noumeno']},
+    O:{p:'Empieza por O — Figura retórica que une palabras de significado opuesto',r:'OXÍMORON',alt:['oxímoron','oximoron']},
+    P:{p:'Empieza por P — Corriente filosófica que juzga las ideas por sus consecuencias prácticas',r:'PRAGMATISMO',alt:['pragmatismo']},
+    Q:{p:'Contiene la Q — Término lógico que expresa que algo pertenece a todos los elementos',r:'CUANTIFICADOR',alt:['cuantificador','cuantificador universal']},
+    R:{p:'Empieza por R — Filósofo francés del siglo XVIII autor del Contrato Social',r:'ROUSSEAU',alt:['rousseau','jean-jacques rousseau']},
+    S:{p:'Empieza por S — Filósofo holandés del siglo XVII que escribió la Ética en latín',r:'SPINOZA',alt:['spinoza','baruch spinoza']},
+    T:{p:'Empieza por T — Corriente filosófica que estudia las causas finales de las cosas',r:'TELEOLOGIA',alt:['teleología','teleologia']},
+    U:{p:'Empieza por U — Corriente filosófica que busca el mayor bien para el mayor número',r:'UTILITARISMO',alt:['utilitarismo']},
+    V:{p:'Empieza por V — Filósofo austríaco del siglo XX autor de las Investigaciones Filosóficas',r:'WITTGENSTEIN',alt:['wittgenstein','ludwig wittgenstein']},
+    W:{p:'Empieza por W — Filósofo austríaco que afirmó que los límites de mi lenguaje son los de mi mundo',r:'WITTGENSTEIN',alt:['wittgenstein']},
+    X:{p:'Contiene la X — Filósofo griego autor de las Memorias de Sócrates',r:'JENOFONTE',alt:['jenofonte']},
+    Y:{p:'Contiene la Y — Movimiento filosófico que defiende que nada puede ser conocido con certeza',r:'ESCEPTICISMO',alt:['escepticismo']},
+    Z:{p:'Empieza por Z — Filósofo estoico griego fundador de la escuela del Pórtico',r:'ZENON',alt:['zenón','zenon','zenón de citio']},
+  }},
+
+  // ── ROSCO 10 — El gran Pasapalabra ──
+  { titulo:'Rosco 10 — El gran rosco', dif:'🔴 Experto', estrellas:'⭐⭐⭐⭐⭐', preguntas:{
+    A:{p:'Empieza por A — Recurso estilístico que consiste en repetir sonidos vocálicos',r:'ASONANCIA',alt:['asonancia']},
+    B:{p:'Empieza por B — Corriente literaria hispanoamericana que mezcla realidad y fantasía',r:'BOOM',alt:['boom','boom latinoamericano']},
+    C:{p:'Empieza por C — Figura que consiste en ordenar las palabras de mayor a menor intensidad',r:'CLÍMAX',alt:['clímax','climax']},
+    D:{p:'Empieza por D — Término griego que designa el desenlace de una obra teatral',r:'DESENLACE',alt:['desenlace']},
+    E:{p:'Empieza por E — Poema extenso que narra hazañas heroicas',r:'EPOPEYA',alt:['epopeya']},
+    F:{p:'Empieza por F — Figura retórica que consiste en usar palabras cuyo sonido imita lo que nombran',r:'FONOSIMBOLISMO',alt:['fonosimbolismo','onomatopeya']},
+    G:{p:'Empieza por G — Modo verbal que expresa la acción en su desarrollo sin indicar tiempo',r:'GERUNDIO',alt:['gerundio']},
+    H:{p:'Empieza por H — Verso de dieciséis sílabas formado por dos octosílabos',r:'HEXADECASILABO',alt:['hexadecasílabo','hexadecasilabo']},
+    I:{p:'Empieza por I — Figura que consiste en decir lo contrario de lo que se quiere expresar',r:'IRONIA',alt:['ironía','ironia']},
+    J:{p:'Empieza por J — Texto literario breve que expone una enseñanza moral',r:'JABALI',alt:['fábula','apólogo']},
+    K:{p:'Contiene la K — Novela de Kafka en la que el protagonista es perseguido sin saber por qué',r:'EL PROCESO',alt:['el proceso','proceso']},
+    L:{p:'Empieza por L — Composición poética breve que expresa sentimientos del autor',r:'LIRICA',alt:['lírica','lirica']},
+    M:{p:'Empieza por M — Figura que consiste en nombrar la causa por el efecto o viceversa',r:'METONIMIA',alt:['metonimia']},
+    N:{p:'Empieza por N — Corriente literaria española de finales del siglo XIX que renovó la literatura',r:'MODERNISMO',alt:['modernismo']},
+    Ñ:{p:'Contiene la Ñ — Obra de Lorca que narra la pasión de una mujer por un torero',r:'LLANTO',alt:['llanto','llanto por ignacio sánchez mejías']},
+    O:{p:'Empieza por O — Poema lírico de tono elevado que alaba a una persona o cosa',r:'ODA',alt:['oda']},
+    P:{p:'Empieza por P — Figura que atribuye cualidades humanas a animales o cosas',r:'PROSOPOPEYA',alt:['prosopopeya']},
+    Q:{p:'Contiene la Q — Figura retórica que compara dos elementos usando como o cual',r:'COMPARACION',alt:['comparación','comparacion']},
+    R:{p:'Empieza por R — Término que designa la repetición de sonidos al final de los versos',r:'RIMA',alt:['rima']},
+    S:{p:'Empieza por S — Composición poética de catorce versos endecasílabos',r:'SONETO',alt:['soneto']},
+    T:{p:'Empieza por T — Figura que consiste en usar tres elementos para expresar una idea',r:'TRICOLON',alt:['tricólon','tricolon']},
+    U:{p:'Empieza por U — Género literario que describe una sociedad ideal e imaginaria',r:'UTOPIA',alt:['utopía','utopia']},
+    V:{p:'Empieza por V — Término que designa el punto de vista desde el que se narra una historia',r:'VOZ NARRATIVA',alt:['voz narrativa','voz']},
+    W:{p:'Contiene la W — Novela de Aldous Huxley que describe una sociedad futura controlada',r:'MUNDO FELIZ',alt:['mundo feliz','un mundo feliz']},
+    X:{p:'Contiene la X — Figura retórica que consiste en la unión de contrarios en una frase',r:'PARADOJA',alt:['paradoja']},
+    Y:{p:'Contiene la Y — Término literario que designa el tiempo y el espacio de una narración',r:'CRONOTOPO',alt:['cronotopo']},
+    Z:{p:'Empieza por Z — Escritor austriaco autor de El mundo de ayer',r:'ZWEIG',alt:['zweig','stefan zweig']},
+  }},
+];
+
+// ══ RANKING ══
+function getRanking() { try { return JSON.parse(localStorage.getItem('ranking_pp')) || {}; } catch(e) { return {}; } }
+function saveRanking(r) { localStorage.setItem('ranking_pp', JSON.stringify(r)); }
+function getDesbloqueados(nombre) {
+  const r = getRanking();
+  if (!r[nombre]) return [0];
+  const desbloqueados = [0];
+  for (let i = 0; i < ROSCOS.length - 1; i++) {
+    const mejor = r[nombre]?.roscos?.[i]?.mejor || 0;
+    if (mejor >= MIN_DESBLOQUEO) desbloqueados.push(i + 1);
+    else break;
+  }
+  return desbloqueados;
+}
+function guardarResultadoRosco(nombre, roscoIdx, aciertos) {
+  const r = getRanking();
+  if (!r[nombre]) r[nombre] = { roscos: {} };
+  if (!r[nombre].roscos) r[nombre].roscos = {};
+  const prev = r[nombre].roscos[roscoIdx] || { mejor: 0, partidas: 0 };
+  r[nombre].roscos[roscoIdx] = {
+    mejor: Math.max(prev.mejor, aciertos),
+    partidas: prev.partidas + 1,
+    ultimo: aciertos,
+  };
+  saveRanking(r);
+}
+
+// ══ NAVEGACIÓN ══
+function mostrarPantalla(id) {
+  ['pantalla-bienvenida','pantalla-roscos','pantalla-juego','pantalla-fin','pantalla-ranking']
+    .forEach(p => document.getElementById(p).style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+}
+
+function elegirJugador(nombre, icono) {
+  jugador = { nombre, icono };
+  mostrarPantalla('pantalla-roscos');
+  document.getElementById('saludo-roscos').textContent = icono + ' ¡Hola ' + nombre + '! Elige tu rosco';
+  renderizarRoscos();
+}
+
+function volverBienvenida() { mostrarPantalla('pantalla-bienvenida'); }
+function volverRoscos() { mostrarPantalla('pantalla-roscos'); renderizarRoscos(); }
+
+function renderizarRoscos() {
+  const desbloqueados = getDesbloqueados(jugador.nombre);
+  const r = getRanking();
+  const cont = document.getElementById('roscos-grid');
+  cont.innerHTML = '';
+  ROSCOS.forEach((rosco, i) => {
+    const desbloqueado = desbloqueados.includes(i);
+    const mejor = r[jugador.nombre]?.roscos?.[i]?.mejor || 0;
+    const completado = mejor >= MIN_DESBLOQUEO;
+    const card = document.createElement('div');
+    card.className = 'rosco-card ' + (desbloqueado ? 'desbloqueado' : 'bloqueado') + (completado ? ' completado' : '');
+    card.innerHTML = desbloqueado
+      ? `<div class="rosco-num">${i + 1}</div>
+         <div class="rosco-dif">${rosco.dif}</div>
+         <div class="rosco-estrellas">${rosco.estrellas}</div>
+         ${mejor > 0 ? `<div class="rosco-mejor">Mejor: ${mejor}/26</div>` : ''}`
+      : `<div class="candado">🔒</div><div class="rosco-dif">${rosco.dif}</div><div class="rosco-estrellas">${rosco.estrellas}</div>`;
+    if (desbloqueado) card.onclick = () => iniciarRosco(i);
+    cont.appendChild(card);
+  });
+}
+
+// ══ JUEGO ══
+function iniciarRosco(idx) {
+  roscoActual = idx;
+  ppEstado = {};
+  LETRAS.forEach(l => ppEstado[l] = 'pendiente');
+  ppOrden = [...LETRAS];
+  ppIdx = 0; ppAcertadas = 0; ppFalladas = 0; ppRespuesta = [];
+  primeraVueltaCompleta = false; preguntasRespondidas = 0;
+  document.getElementById('titulo-juego').textContent = '🎡 ' + ROSCOS[idx].titulo;
+  document.getElementById('badge-juego').textContent = jugador.icono + ' ' + jugador.nombre;
+  document.getElementById('msg-pp').textContent = '';
+  document.getElementById('btn-confirmar').style.display = 'inline-block';
+  document.getElementById('btn-pasa').style.display = 'inline-block';
+  document.getElementById('btn-borrar-pp').style.display = 'inline-block';
+  document.getElementById('btn-rindo').style.display = 'none';
+  document.getElementById('pregunta-pp').style.display = 'block';
+  document.getElementById('teclado-pp').style.display = 'block';
+  construirTeclado();
+  mostrarPantalla('pantalla-juego');
+  mostrarPregunta();
+  setTimeout(() => dibujarRosco(), 100);
+}
+ 
+
+function letraActual() { return ppOrden[ppIdx]; }
+
+function mostrarPregunta() {
+  const l = letraActual();
+  const q = ROSCOS[roscoActual].preguntas[l];
+  ppRespuesta = [];
+  document.getElementById('respuesta-actual').textContent = '';
+  document.getElementById('msg-pp').textContent = '';
+  document.getElementById('pregunta-pp').textContent = q.p;
+  document.getElementById('info-pp').textContent =
+    '✅ ' + ppAcertadas + '  ❌ ' + ppFalladas + '  —  Letra: ' + l + '  —  ' + ROSCOS[roscoActual].dif;
+  habilitarTeclado(true);
+}
+
+function construirTeclado() {
+  const filas = [['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L','Ñ'],['Z','X','C','V','B','N','M']];
+  const cont = document.getElementById('teclado-pp'); cont.innerHTML = '';
+  filas.forEach(fila => {
+    const div = document.createElement('div'); div.className = 'teclado-fila';
+    fila.forEach(l => {
+      const b = document.createElement('button'); b.className = 'tecla'; b.textContent = l; b.id = 'tecla-' + l;
+      b.onclick = () => pulsarTecla(l); div.appendChild(b);
+    });
+    cont.appendChild(div);
+  });
+}
+
+function habilitarTeclado(on) { document.querySelectorAll('.tecla').forEach(b => b.disabled = !on); }
+function pulsarTecla(l) { ppRespuesta.push(l); document.getElementById('respuesta-actual').textContent = ppRespuesta.join(''); }
+function borrarLetra() { if (!ppRespuesta.length) return; ppRespuesta.pop(); document.getElementById('respuesta-actual').textContent = ppRespuesta.join(''); }
+
+function normalizar(s) { return s.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim(); }
+
+function confirmar() {
+  const l = letraActual();
+  const q = ROSCOS[roscoActual].preguntas[l];
+  const resp = normalizar(ppRespuesta.join(''));
+  if (!resp) return;
+  const correctas = [q.r, ...(q.alt || [])].map(normalizar);
+  const ok = correctas.some(c => resp === c || (resp.length >= 4 && (c.includes(resp) || resp.includes(c))));
+  habilitarTeclado(false);
+  preguntasRespondidas++;
+  if (!primeraVueltaCompleta && preguntasRespondidas >= LETRAS.length) {
+    primeraVueltaCompleta = true;
+    document.getElementById('btn-rindo').style.display = 'inline-block';
+  }
+  if (ok) {
+    ppEstado[l] = 'acierto'; ppAcertadas++;
+    document.getElementById('msg-pp').textContent = '✅ ¡Correcto! — ' + q.r;
+  } else {
+    ppEstado[l] = 'fallo'; ppFalladas++;
+    document.getElementById('msg-pp').textContent = '❌ Era: ' + q.r;
+  }
+  dibujarRosco();
+  const pendientes = ppOrden.filter(x => ppEstado[x] === 'pendiente' || ppEstado[x] === 'pasada');
+  if (pendientes.length === 0) { setTimeout(finRosco, 1400); return; }
+  setTimeout(() => { avanzar(); document.getElementById('msg-pp').textContent = ''; }, 1800);
+}
+
+function pasar() {
+  const l = letraActual();
+  ppEstado[l] = 'pasada';
+  preguntasRespondidas++;
+  if (!primeraVueltaCompleta && preguntasRespondidas >= LETRAS.length) {
+    primeraVueltaCompleta = true;
+    document.getElementById('btn-rindo').style.display = 'inline-block';
+  }
+  document.getElementById('msg-pp').textContent = '⏭ Pasada...';
+  dibujarRosco();
+  const pendientes = ppOrden.filter(x => ppEstado[x] === 'pendiente' || ppEstado[x] === 'pasada');
+  if (pendientes.length === 0) { setTimeout(finRosco, 800); return; }
+  setTimeout(() => { avanzar(); document.getElementById('msg-pp').textContent = ''; }, 700);
+}
+
+function avanzar() {
+  for (let i = 1; i <= ppOrden.length; i++) {
+    const idx = (ppIdx + i) % ppOrden.length;
+    if (ppEstado[ppOrden[idx]] === 'pendiente' || ppEstado[ppOrden[idx]] === 'pasada') {
+      ppIdx = idx; mostrarPregunta(); return;
+    }
+  }
+  finRosco();
+}
+
+function meRindo() {
+  if (!confirm('¿Seguro que os rendís? Se mostrarán todas las respuestas pendientes.')) return;
+
+  habilitarTeclado(false);
+  document.getElementById('btn-rindo').style.display = 'none';
+  document.getElementById('btn-pasa').style.display = 'none';
+  document.getElementById('btn-confirmar').style.display = 'none';
+  document.getElementById('btn-borrar-pp').style.display = 'none';
+  document.getElementById('respuesta-actual').textContent = '';
+  document.getElementById('msg-pp').textContent = '';
+
+  const pendientes = ppOrden.filter(l => ppEstado[l] === 'pendiente' || ppEstado[l] === 'pasada');
+  pendientes.forEach(l => ppEstado[l] = 'fallo');
+  dibujarRosco();
+  guardarResultadoRosco(jugador.nombre, roscoActual, ppAcertadas);
+
+  let html = '<div style="text-align:left">';
+  html += '<div style="font-size:18px;font-weight:bold;color:#5C3D1E;margin-bottom:12px;text-align:center">📖 Soluciones pendientes</div>';
+  pendientes.forEach(l => {
+    const q = ROSCOS[roscoActual].preguntas[l];
+    const pregunta = q.p.replace(/^(Empieza por [A-ZÑ]|Contiene la [A-ZÑ]) — /, '');
+    html += '<div style="margin-bottom:10px;font-size:15px;color:#5C3D1E;border-bottom:1px solid #E8D5B7;padding-bottom:8px">'
+      + '<strong style="color:#C97B2A;font-size:17px">' + l + '</strong> — ' + pregunta
+      + '<br><span style="color:#2E7D32;font-weight:bold">✅ ' + q.r + '</span></div>';
+  });
+  html += '</div>';
+  document.getElementById('pregunta-pp').innerHTML = html;
+
+  const btnVolver = document.createElement('button');
+  btnVolver.className = 'btn-pp btn-pasa';
+  btnVolver.style.marginTop = '14px';
+  btnVolver.style.display = 'block';
+  btnVolver.style.margin = '14px auto 0';
+  btnVolver.textContent = '📋 Volver a los roscos';
+  btnVolver.onclick = volverRoscos;
+  document.querySelector('.botones-pp').appendChild(btnVolver);
+}
+
+function finRosco() {
+  habilitarTeclado(false);
+  guardarResultadoRosco(jugador.nombre, roscoActual, ppAcertadas);
+  dibujarRosco();
+  mostrarPantalla('pantalla-fin');
+  const pct = Math.round(ppAcertadas / 26 * 100);
+  const emojis = pct === 100 ? '🏆' : pct >= 75 ? '🎉' : pct >= 50 ? '👏' : '💪';
+  const msgs = pct === 100 ? '¡Rosco perfecto!' : pct >= 75 ? '¡Extraordinario!' : pct >= 50 ? '¡Muy bien!' : '¡A seguir practicando!';
+  document.getElementById('fin-emoji').textContent = emojis;
+  document.getElementById('fin-titulo').textContent = '¡' + jugador.nombre + '! ' + msgs;
+  document.getElementById('fin-puntos').textContent = '✅ ' + ppAcertadas + ' acertadas  ❌ ' + ppFalladas + ' falladas';
+  const desbloquea = ppAcertadas >= MIN_DESBLOQUEO && roscoActual < ROSCOS.length - 1;
+  document.getElementById('fin-desbloqueo').textContent = desbloquea
+    ? '🔓 ¡Has desbloqueado el Rosco ' + (roscoActual + 2) + '!'
+    : ppAcertadas < MIN_DESBLOQUEO ? '⚠️ Necesitas ' + MIN_DESBLOQUEO + ' aciertos para desbloquear el siguiente' : '';
+}
+
+function repetirRosco() { iniciarRosco(roscoActual); }
+
+// ══ ROSCO VISUAL ══
+function dibujarRosco() {
+  const canvas = document.getElementById('rosco-canvas');
+  const ctx = canvas.getContext('2d');
+  const cx = 150, cy = 150, r = 128;
+  ctx.clearRect(0, 0, 300, 300);
+  const n = LETRAS.length;
+  LETRAS.forEach((l, i) => {
+    const angle = (i / n) * 2 * Math.PI - Math.PI / 2;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    const est = ppEstado[l] || 'pendiente';
+    const esActual = letraActual() === l && !['acierto','fallo'].includes(est);
+    ctx.beginPath(); ctx.arc(x, y, 13, 0, 2 * Math.PI);
+    ctx.fillStyle = est==='acierto'?'#4CAF50':est==='fallo'?'#F44336':est==='pasada'?'#FF9800':esActual?'#C97B2A':'#FFF3E0';
+    ctx.fill();
+    ctx.strokeStyle = esActual ? '#5C3D1E' : '#C97B2A';
+    ctx.lineWidth = esActual ? 2.5 : 1.5; ctx.stroke();
+    ctx.fillStyle = ['acierto','fallo','pasada'].includes(est)||esActual ? 'white' : '#5C3D1E';
+    ctx.font = 'bold 10px Georgia'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(l, x, y);
+  });
+  ctx.fillStyle = '#5C3D1E'; ctx.font = 'bold 22px Georgia'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(ppAcertadas + '/26', cx, cy - 12);
+  ctx.font = '13px Georgia'; ctx.fillStyle = '#8B6340';
+  ctx.fillText('✅' + ppAcertadas + ' ❌' + ppFalladas, cx, cy + 14);
+}
+
+// ══ RANKING ══
+function mostrarRanking() {
+  mostrarPantalla('pantalla-ranking');
+  const r = getRanking();
+  const jugadores = ['Federico','Begoña'];
+  const iconos = {Federico:'🌟', Begoña:'🌸'};
+  let html = '<table class="ranking-tabla"><thead><tr><th>Rosco</th>';
+  jugadores.forEach(j => html += '<th>' + iconos[j] + ' ' + j + '</th>');
+  html += '</tr></thead><tbody>';
+  ROSCOS.forEach((rosco, i) => {
+    html += '<tr><td><strong>' + rosco.titulo + '</strong><br><small>' + rosco.dif + '</small></td>';
+    const puntos = jugadores.map(j => r[j]?.roscos?.[i]?.mejor || -1);
+    const max = Math.max(...puntos);
+    jugadores.forEach((j, ji) => {
+      const d = r[j]?.roscos?.[i];
+      if (!d) { html += '<td style="color:#ccc">—</td>'; return; }
+      const corona = (d.mejor === max && max >= 0 && puntos.filter(p=>p===max).length===1) ? ' 👑' : '';
+      html += '<td>' + d.mejor + '/26' + corona + '<br><small style="color:#8B6340">' + d.partidas + ' partida' + (d.partidas>1?'s':'') + '</small></td>';
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('tabla-ranking').innerHTML = html;
+}
+
+function resetRanking() {
+  if (confirm('¿Seguro que queréis borrar el ranking del Pasapalabra?')) {
+    localStorage.removeItem('ranking_pp');
+    mostrarRanking();
+  }
+}
+</script>
+</body>
+</html>
