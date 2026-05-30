@@ -608,6 +608,15 @@ function construirTeclado() {
     });
     cont.appendChild(div);
   });
+  const esp = document.createElement('button');
+  esp.className = 'tecla';
+  esp.style.width = '120px';
+  esp.textContent = '␣ Espacio';
+  esp.onclick = () => pulsarTecla(' ');
+  const filaEsp = document.createElement('div');
+  filaEsp.className = 'teclado-fila';
+  filaEsp.appendChild(esp);
+  cont.appendChild(filaEsp);
 }
 
 function habilitarTeclado(on) { document.querySelectorAll('.tecla').forEach(b => b.disabled = !on); }
